@@ -7,6 +7,8 @@ import logsRoutes from './logs.js';
 import adminRoutes from './admin.js';
 import sendRoutes from './send.js';
 import docsRoutes from './docs.js';
+import Domain from '../models/Domain.js';
+import EmailAccount from '../models/EmailAccount.js';
 
 const router = express.Router();
 
@@ -31,8 +33,15 @@ router.use(async (req, res, next) => {
     }
 });
 
-router.get('/', (req, res) => {
-    res.render('dashboard/overview');
+router.get('/', async (req, res) => {
+    try {
+        const domainCount = await Domain.countDocuments({ userId: req.user._id });
+        const accountCount = await EmailAccount.countDocuments({ userId: req.user._id });
+        res.render('dashboard/overview', { domainCount, accountCount });
+    } catch (err) {
+        console.error('Error fetching dashboard stats:', err);
+        res.render('dashboard/overview', { domainCount: 0, accountCount: 0 });
+    }
 });
 
 router.use('/domains', domainRoutes);

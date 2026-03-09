@@ -1,6 +1,6 @@
 <%- include('../partials/dashboard_header', { title: 'Overview' , currentPath: '/dashboard' }) %>
     <h1 class="text-2xl font-semibold text-gray-900">Dashboard</h1>
-    <p class="mt-1 text-sm text-gray-500">Welcome back, ${user.name}. Here's what's happening today.</p>
+    <p class="mt-1 text-sm text-gray-500">Welcome back, <%= user.name %>. Here's what's happening today.</p>
 
     <div class="mt-8">
         <dl
@@ -9,7 +9,9 @@
                 <dt class="text-base font-normal text-gray-900">Total Domains</dt>
                 <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
                     <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-                        <span id="stat-domains">-</span>
+                        <span id="stat-domains">
+                            <%= typeof domainCount !=='undefined' ? domainCount : 0 %>
+                        </span>
                     </div>
                 </dd>
             </div>
@@ -17,15 +19,19 @@
                 <dt class="text-base font-normal text-gray-900">Active Email Accounts</dt>
                 <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
                     <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-                        <span id="stat-accounts">-</span>
+                        <span id="stat-accounts">
+                            <%= typeof accountCount !=='undefined' ? accountCount : 0 %>
+                        </span>
                     </div>
                 </dd>
             </div>
             <div class="px-4 py-5 sm:p-6">
-                <dt class="text-base font-normal text-gray-900">Emails Sent (This Month)</dt>
+                <dt class="text-base font-normal text-gray-900">Emails Sent</dt>
                 <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
                     <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-                        <span id="stat-emails">${user.usage.emailsSent}</span>
+                        <span id="stat-emails">
+                            <%= user.usage && user.usage.emailsSent ? user.usage.emailsSent : 0 %>
+                        </span>
                     </div>
                 </dd>
             </div>
