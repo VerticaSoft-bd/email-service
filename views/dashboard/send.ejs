@@ -1,0 +1,132 @@
+<%- include('../partials/dashboard_header', { title: 'Send Email' , currentPath: '/dashboard/send' }) %>
+
+    <div class="sm:flex sm:items-center justify-between">
+        <div class="sm:flex-auto">
+            <h1 class="text-2xl font-semibold text-gray-900">Send Email</h1>
+            <p class="mt-2 text-sm text-gray-700">Compose and send an email directly from your verified domain accounts.
+            </p>
+        </div>
+    </div>
+
+    <div class="mt-8 max-w-3xl">
+        <div class="bg-white shadow sm:rounded-lg border border-gray-200">
+            <div class="px-4 py-5 sm:p-6">
+                <% if (error) { %>
+                    <div class="mb-4 bg-red-50 border-l-4 border-red-400 p-4">
+                        <p class="text-sm text-red-700">
+                            <%= error %>
+                        </p>
+                    </div>
+                    <% } %>
+
+                        <% if (success) { %>
+                            <div class="mb-4 bg-green-50 border-l-4 border-green-400 p-4">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <i data-lucide="check-circle" class="h-5 w-5 text-green-400"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm text-green-700">
+                                            <%= success %>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <% } %>
+
+                                <% if (!user.domainVerified) { %>
+                                    <div class="rounded-md bg-yellow-50 p-4 border border-yellow-200">
+                                        <div class="flex">
+                                            <div class="flex-shrink-0">
+                                                <i data-lucide="alert-triangle" class="h-5 w-5 text-yellow-400"></i>
+                                            </div>
+                                            <div class="ml-3">
+                                                <h3 class="text-sm font-medium text-yellow-800">Domain Verification
+                                                    Required</h3>
+                                                <div class="mt-2 text-sm text-yellow-700">
+                                                    <p>You must verify your domain before you can send emails. <a
+                                                            href="/dashboard/domains"
+                                                            class="font-bold underline hover:text-yellow-600">Go to
+                                                            Domains menu</a>.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <% } else if (!accounts || accounts.length===0) { %>
+                                        <div class="rounded-md bg-blue-50 p-4 border border-blue-200">
+                                            <div class="flex">
+                                                <div class="flex-shrink-0">
+                                                    <i data-lucide="info" class="h-5 w-5 text-blue-400"></i>
+                                                </div>
+                                                <div class="ml-3">
+                                                    <h3 class="text-sm font-medium text-blue-800">No Email Accounts
+                                                        Found</h3>
+                                                    <div class="mt-2 text-sm text-blue-700">
+                                                        <p>Please create an email account prefix (like info@ or
+                                                            support@) first. <a href="/dashboard/accounts"
+                                                                class="font-bold underline hover:text-blue-600">Go to
+                                                                Email Accounts</a>.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <% } else { %>
+                                            <form action="/dashboard/send" method="POST" class="space-y-6">
+                                                <div>
+                                                    <label for="fromAccount"
+                                                        class="block text-sm font-medium text-gray-700">From</label>
+                                                    <select id="fromAccount" name="fromAccount"
+                                                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md border"
+                                                        required>
+                                                        <% accounts.forEach(account=> { %>
+                                                            <option value="<%= account._id %>">
+                                                                <%= account.prefix %>@<%= account.domain %>
+                                                            </option>
+                                                            <% }) %>
+                                                    </select>
+                                                </div>
+
+                                                <div>
+                                                    <label for="to"
+                                                        class="block text-sm font-medium text-gray-700">To</label>
+                                                    <div class="mt-1">
+                                                        <input type="email" name="to" id="to"
+                                                            class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md border px-3 py-2"
+                                                            placeholder="recipient@example.com" required>
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <label for="subject"
+                                                        class="block text-sm font-medium text-gray-700">Subject</label>
+                                                    <div class="mt-1">
+                                                        <input type="text" name="subject" id="subject"
+                                                            class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md border px-3 py-2"
+                                                            placeholder="Email Subject" required>
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <label for="body"
+                                                        class="block text-sm font-medium text-gray-700">Message</label>
+                                                    <div class="mt-1">
+                                                        <textarea id="body" name="body" rows="6"
+                                                            class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md px-3 py-2"
+                                                            placeholder="Type your message here..." required></textarea>
+                                                    </div>
+                                                </div>
+
+                                                <div class="flex justify-end">
+                                                    <button type="submit"
+                                                        class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-150">
+                                                        <i data-lucide="send" class="h-4 w-4 mr-2"></i>
+                                                        Send Email
+                                                    </button>
+                                                </div>
+                                            </form>
+                                            <% } %>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/dashboard_footer') %>

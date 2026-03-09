@@ -5,6 +5,7 @@ import accountsRoutes from './accounts.js';
 import apikeysRoutes from './apikeys.js';
 import logsRoutes from './logs.js';
 import adminRoutes from './admin.js';
+import sendRoutes from './send.js';
 
 const router = express.Router();
 
@@ -38,5 +39,6 @@ router.use('/accounts', accountsRoutes);
 router.use('/apikeys', apikeysRoutes);
 router.use('/logs', logsRoutes);
 router.use('/admin', adminRoutes);
+router.use('/send', sendRoutes);
 
 export default router;
