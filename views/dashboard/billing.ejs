@@ -1,0 +1,165 @@
+<%- include('../partials/dashboard_header', { title: 'Billing & Subscriptions' , currentPath: '/dashboard/billing' }) %>
+    <div class="sm:flex sm:items-center justify-between">
+        <div class="sm:flex-auto">
+            <h1 class="text-2xl font-semibold text-gray-900">Billing & Subscriptions</h1>
+            <p class="mt-2 text-sm text-gray-700">Manage your current plan, upgrade to a higher tier, and view your
+                invoice history.</p>
+        </div>
+    </div>
+
+    <div class="mt-8">
+        <% if (typeof req !=='undefined' && req.query.success) { %>
+            <div class="mb-4 bg-green-50 border-l-4 border-green-400 p-4">
+                <p class="text-sm text-green-700">Payment Successful. Your plan has been upgraded!</p>
+            </div>
+            <% } %>
+                <% if (typeof req !=='undefined' && req.query.error) { %>
+                    <div class="mb-4 bg-red-50 border-l-4 border-red-400 p-4">
+                        <p class="text-sm text-red-700">Payment failed or was cancelled.</p>
+                    </div>
+                    <% } %>
+
+                        <div class="bg-white shadow sm:rounded-lg border border-gray-200 overflow-hidden">
+                            <div class="px-4 py-5 sm:p-6 bg-gray-50 border-b border-gray-200">
+                                <div class="sm:flex sm:items-start sm:justify-between">
+                                    <div>
+                                        <h3 class="text-lg leading-6 font-medium text-gray-900">
+                                            Current Plan: <span class="capitalize text-indigo-700 font-bold">
+                                                <%= user.plan || 'starter' %>
+                                            </span>
+                                        </h3>
+                                        <div class="mt-2 max-w-xl text-sm text-gray-500">
+                                            <% if (user.plan==='starter' ) { %>
+                                                <p>You are on the free starter plan. Upgrade below to unlock more
+                                                    domains, daily limits, and bulk campaigns capability.</p>
+                                                <% } else { %>
+                                                    <p>Your subscription is active until:
+                                                        <span class="font-medium text-gray-900">
+                                                            <%= user.subscriptionExpiry ? new
+                                                                Date(user.subscriptionExpiry).toLocaleDateString()
+                                                                : 'N/A' %>
+                                                        </span>
+                                                    </p>
+                                                    <% } %>
+                                        </div>
+                                    </div>
+                                    <% if (user.plan==='starter' ) { %>
+                                        <div class="mt-5 sm:mt-0 sm:ml-6 sm:flex-shrink-0 sm:flex sm:items-center">
+                                            <a href="#upgrade-section"
+                                                class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm">
+                                                Upgrade Plan
+                                            </a>
+                                        </div>
+                                        <% } %>
+                                </div>
+                            </div>
+                        </div>
+    </div>
+
+    <!-- Upgrade / Pricing Table -->
+    <div id="upgrade-section" class="mt-8">
+        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Available Plans</h3>
+        <div class="grid lg:grid-cols-2 gap-6 max-w-5xl">
+            <!-- Professional Plan -->
+            <div
+                class="bg-white rounded-xl shadow-sm border border-indigo-200 p-6 flex flex-col relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
+                    Most Popular</div>
+                <h4 class="text-xl font-semibold text-gray-900">Professional</h4>
+                <div class="my-4">
+                    <span class="text-4xl font-extrabold text-gray-900">৳2900</span>
+                    <span class="text-gray-500 font-medium whitespace-nowrap">/month</span>
+                </div>
+                <ul class="space-y-3 mb-8 text-gray-600 text-sm flex-1">
+                    <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-indigo-500 mr-3"></i> 5
+                        Verified Domains</li>
+                    <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-indigo-500 mr-3"></i>
+                        Unlimited Email Identities</li>
+                    <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-indigo-500 mr-3"></i>
+                        50,000 Emails / month</li>
+                    <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-indigo-500 mr-3"></i> Bulk
+                        Campaigns Access</li>
+                </ul>
+                <form action="/dashboard/billing/checkout" method="POST">
+                    <input type="hidden" name="plan" value="pro">
+                    <button type="submit"
+                        class="w-full py-2.5 px-4 text-center rounded-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition-colors"
+                        <%=user.plan==='pro' ? 'disabled' : '' %>>
+                        <%= user.plan==='pro' ? 'Current Plan' : 'Buy Professional' %>
+                    </button>
+                    <p class="text-xs text-center text-gray-400 mt-2">Powered securely by PayStation</p>
+                </form>
+            </div>
+
+            <!-- Scale Plan -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col">
+                <h4 class="text-xl font-semibold text-gray-900">Scale</h4>
+                <div class="my-4">
+                    <span class="text-4xl font-extrabold text-gray-900">৳9900</span>
+                    <span class="text-gray-500 font-medium whitespace-nowrap">/month</span>
+                </div>
+                <ul class="space-y-3 mb-8 text-gray-600 text-sm flex-1">
+                    <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-green-500 mr-3"></i>
+                        Unlimited Domains</li>
+                    <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-green-500 mr-3"></i>
+                        500,000 Emails / month</li>
+                    <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-green-500 mr-3"></i>
+                        Developer API Access</li>
+                    <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-green-500 mr-3"></i>
+                        Priority Support</li>
+                </ul>
+                <form action="/dashboard/billing/checkout" method="POST">
+                    <input type="hidden" name="plan" value="scale">
+                    <button type="submit"
+                        class="w-full py-2.5 px-4 text-center rounded-lg font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 transition-colors"
+                        <%=user.plan==='scale' ? 'disabled' : '' %>>
+                        <%= user.plan==='scale' ? 'Current Plan' : 'Buy Scale' %>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoice History -->
+    <div class="mt-10">
+        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Invoice History</h3>
+        <div class="bg-white shadow overflow-hidden sm:rounded-md border border-gray-200">
+            <ul role="list" class="divide-y divide-gray-200">
+                <% if (orders && orders.length> 0) { %>
+                    <% orders.forEach(order=> { %>
+                        <li>
+                            <div class="px-4 py-4 sm:px-6 flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-indigo-600 truncate">
+                                        <%= order.invoice_number %>
+                                    </p>
+                                    <div class="mt-2 text-xs text-gray-500 uppercase font-semibold">
+                                        Plan: <%= order.plan %> &bull; ৳<%= order.amount %>
+                                    </div>
+                                    <p class="text-xs text-gray-400 mt-1">
+                                        <%= new Date(order.createdAt).toLocaleString() %>
+                                    </p>
+                                </div>
+                                <div>
+                                    <% if (order.status==='completed' ) { %>
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Paid</span>
+                                        <% } else if (order.status==='failed' ) { %>
+                                            <span
+                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Failed</span>
+                                            <% } else { %>
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Pending</span>
+                                                <% } %>
+                                </div>
+                            </div>
+                        </li>
+                        <% }) %>
+                            <% } else { %>
+                                <li class="px-4 py-8 text-center text-gray-500 text-sm">No past orders.</li>
+                                <% } %>
+            </ul>
+        </div>
+    </div>
+
+    <%- include('../partials/dashboard_footer') %>

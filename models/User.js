@@ -33,7 +33,15 @@ const userSchema = new mongoose.Schema({
     },
     createdAt: {
         type: Date,
-        default: Date.now,
+        default: Date.now
+    },
+    plan: {
+        type: String,
+        enum: ['starter', 'pro', 'scale'],
+        default: 'starter'
+    },
+    subscriptionExpiry: {
+        type: Date
     },
     usage: {
         emailsSent: { type: Number, default: 0 },
