@@ -1,10 +1,7 @@
 import { Router } from 'express';
 import EmailAccount from '../models/EmailAccount.js';
 import Domain from '../models/Domain.js';
-import { createRequire } from 'module';
-
-const require = createRequire(import.meta.url);
-const bcrypt = require('../tmp-install/node_modules/bcrypt');
+import bcrypt from 'bcrypt';
 
 const router = Router();
 

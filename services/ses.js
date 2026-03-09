@@ -1,19 +1,10 @@
-import { createRequire } from 'module';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-
-// Use createRequire to load @aws-sdk from tmp-install/node_modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const require = createRequire(join(__dirname, '..', 'tmp-install', 'node_modules', '/'));
-
-const {
+import {
     SESClient,
     VerifyDomainIdentityCommand,
     VerifyDomainDkimCommand,
     GetIdentityVerificationAttributesCommand,
     SendEmailCommand,
-} = require('@aws-sdk/client-ses');
+} from '@aws-sdk/client-ses';
 
 /**
  * Create an SES client using the centralized AWS credentials from .env.

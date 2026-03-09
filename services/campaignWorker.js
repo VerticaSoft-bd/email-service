@@ -1,12 +1,4 @@
-import { createRequire } from 'module';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const require = createRequire(join(__dirname, '..', 'tmp-install', 'node_modules', '/'));
-
-const { SESClient, SendRawEmailCommand } = require('@aws-sdk/client-ses');
+import { SESClient, SendRawEmailCommand } from '@aws-sdk/client-ses';
 
 import Campaign from '../models/Campaign.js';
 import Recipient from '../models/Recipient.js';
