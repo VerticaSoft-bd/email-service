@@ -1,0 +1,287 @@
+<%- include('../../partials/dashboard_header', { title: 'Campaign Details' , currentPath: '/dashboard/campaigns' }) %>
+
+    <div class="mb-8 flex justify-between items-center">
+        <div>
+            <a href="/dashboard/campaigns" class="text-sm text-indigo-600 hover:text-indigo-900 flex items-center mb-4">
+                <i data-lucide="arrow-left" class="h-4 w-4 mr-1"></i> Back to Campaigns
+            </a>
+            <h1 class="text-2xl font-semibold text-gray-900">
+                <%= campaign.name %>
+            </h1>
+            <p class="mt-2 text-sm text-gray-700">From: <%= campaign.senderAccount.prefix %>@<%=
+                        campaign.senderAccount.domain %>
+            </p>
+        </div>
+        <div>
+            <span class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full 
+            <%= campaign.status === 'Completed' ? 'bg-green-100 text-green-800' : 
+                campaign.status === 'Sending' ? 'bg-blue-100 text-blue-800' : 
+                campaign.status === 'Draft' ? 'bg-gray-100 text-gray-800' : 
+                'bg-yellow-100 text-yellow-800' %>">
+                Status: <%= campaign.status %>
+            </span>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2 space-y-6">
+
+            <!-- Status Specific Content -->
+            <% if (campaign.status==='Draft' ) { %>
+                <div class="bg-white shadow rounded-lg border border-gray-200 p-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Upload Recipients (CSV)</h3>
+                    <p class="text-sm text-gray-500 mb-4">
+                        Upload a CSV file containing at least an <code>email</code> column. Any other columns (e.g.,
+                        <code>name</code>, <code>company</code>) will be available as <code>{{variable}}</code> tags
+                        inside your email content.
+                    </p>
+
+                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md upload-zone"
+                        id="drop-zone">
+                        <div class="space-y-1 text-center">
+                            <i data-lucide="file-spreadsheet" class="mx-auto h-12 w-12 text-gray-400"></i>
+                            <div class="flex text-sm text-gray-600 justify-center">
+                                <label for="csv-upload"
+                                    class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+                                    <span>Upload a file</span>
+                                    <input id="csv-upload" name="csv-upload" type="file" class="sr-only" accept=".csv">
+                                </label>
+                                <p class="pl-1">or drag and drop</p>
+                            </div>
+                            <p class="text-xs text-gray-500">CSV up to 10MB</p>
+                        </div>
+                    </div>
+
+                    <div id="upload-progress" class="hidden mt-4">
+                        <div class="flex justify-between text-sm text-gray-600 mb-1">
+                            <span>Parsing CSV...</span>
+                            <span id="upload-percent">0%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-indigo-600 h-2 rounded-full" id="upload-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                </div>
+                <% } %>
+
+                    <% if (campaign.status==='Ready' ) { %>
+                        <div class="bg-white shadow rounded-lg border border-gray-200 p-6">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Ready to Send</h3>
+                            <p class="text-sm text-gray-600 mb-4">You have successfully uploaded <strong>
+                                    <%= campaign.totalRecipients %>
+                                </strong> recipients.</p>
+
+                            <form action="/dashboard/campaigns/<%= campaign._id %>/start" method="POST">
+                                <button type="submit"
+                                    class="inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 w-full sm:w-auto">
+                                    <i data-lucide="play" class="h-4 w-4 mr-2"></i> Start Sending Campaign
+                                </button>
+                            </form>
+                        </div>
+                        <% } %>
+
+                            <% if (campaign.status==='Sending' || campaign.status==='Completed' ) { %>
+                                <div class="bg-white shadow rounded-lg border border-gray-200 p-6">
+                                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Campaign Progress</h3>
+
+                                    <dl class="grid grid-cols-1 gap-5 sm:grid-cols-3">
+                                        <div class="px-4 py-5 bg-gray-50 shadow rounded-lg overflow-hidden sm:p-6">
+                                            <dt class="text-sm font-medium text-gray-500 truncate">Total Recipients</dt>
+                                            <dd class="mt-1 text-3xl font-semibold text-gray-900">
+                                                <%= campaign.totalRecipients %>
+                                            </dd>
+                                        </div>
+                                        <div class="px-4 py-5 bg-green-50 shadow rounded-lg overflow-hidden sm:p-6">
+                                            <dt class="text-sm font-medium text-gray-500 truncate">Sent Successfully
+                                            </dt>
+                                            <dd class="mt-1 text-3xl font-semibold text-green-600">
+                                                <%= campaign.sentCount %>
+                                            </dd>
+                                        </div>
+                                        <div class="px-4 py-5 bg-red-50 shadow rounded-lg overflow-hidden sm:p-6">
+                                            <dt class="text-sm font-medium text-gray-500 truncate">Failed</dt>
+                                            <dd class="mt-1 text-3xl font-semibold text-red-600">
+                                                <%= campaign.failedCount %>
+                                            </dd>
+                                        </div>
+                                    </dl>
+
+                                    <div class="mt-6">
+                                        <div class="w-full bg-gray-200 rounded-full h-4">
+                                            <div class="bg-indigo-600 h-4 rounded-full"
+                                                style="width: <%= campaign.totalRecipients > 0 ? Math.round(((campaign.sentCount + campaign.failedCount) / campaign.totalRecipients) * 100) : 0 %>%;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% } %>
+
+                                    <!-- Content Preview -->
+                                    <div class="bg-white shadow rounded-lg border border-gray-200 overflow-hidden">
+                                        <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+                                            <h3 class="text-lg leading-6 font-medium text-gray-900">Content Preview</h3>
+                                        </div>
+                                        <div class="px-4 py-5 sm:p-6 bg-gray-50">
+                                            <div class="mb-4">
+                                                <span
+                                                    class="text-xs font-semibold text-gray-500 uppercase">Subject:</span>
+                                                <p class="text-md text-gray-900">
+                                                    <%= campaign.subject %>
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <span class="text-xs font-semibold text-gray-500 uppercase">Body:</span>
+                                                <div
+                                                    class="mt-2 prose max-w-none text-gray-800 bg-white p-4 rounded border border-gray-200">
+                                                    <%- campaign.bodyHtml %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+        </div>
+
+        <!-- Sample Recipients Sidebar -->
+        <div class="lg:col-span-1">
+            <div class="bg-white shadow rounded-lg border border-gray-200">
+                <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">Sample Recipients</h3>
+                </div>
+                <% if (recipients && recipients.length> 0) { %>
+                    <ul class="divide-y divide-gray-200">
+                        <% recipients.forEach(rec=> { %>
+                            <li class="px-4 py-4 sm:px-6">
+                                <div class="flex items-center justify-between">
+                                    <p class="text-sm font-medium text-gray-900 truncate">
+                                        <%= rec.email %>
+                                    </p>
+                                    <span
+                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= rec.status === 'Sent' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' %>">
+                                        <%= rec.status %>
+                                    </span>
+                                </div>
+                                <% if (rec.variables && Object.keys(rec.variables).length> 0) { %>
+                                    <div class="mt-2 flex flex-wrap gap-1">
+                                        <% Object.entries(rec.variables).forEach(([k, v])=> { %>
+                                            <span
+                                                class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                                                <%= k %>: <%= v %>
+                                            </span>
+                                            <% }) %>
+                                    </div>
+                                    <% } %>
+                            </li>
+                            <% }) %>
+                    </ul>
+                    <% } else { %>
+                        <div class="px-4 py-5 sm:p-6 text-center text-sm text-gray-500">
+                            No recipients loaded yet.
+                        </div>
+                        <% } %>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Client-side CSV Parsing Logic
+        const fileInput = document.getElementById('csv-upload');
+        const uploadProgress = document.getElementById('upload-progress');
+        const uploadBar = document.getElementById('upload-bar');
+        const uploadPercent = document.getElementById('upload-percent');
+        const dropZone = document.getElementById('drop-zone');
+
+        if (fileInput) {
+            fileInput.addEventListener('change', handleFileUpload);
+        }
+
+        // Parse CSV line preserving quoted values
+        function parseCSVLine(text) {
+            const re = /(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|([^,\"\r\n]*))(?=,|\r?\n|\r|$)/g;
+            const res = [];
+            let m;
+            while ((m = re.exec(text)) !== null) {
+                if (m.index === re.lastIndex) re.lastIndex++;
+                res.push(m[1] ? m[1].replace(/\"\"/g, '\"') : m[2]);
+            }
+            res.pop(); // Remove last empty element usually picked up by regex
+            return res;
+        }
+
+        async function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            dropZone.classList.add('hidden');
+            uploadProgress.classList.remove('hidden');
+            uploadBar.style.width = '10%';
+            uploadPercent.textContent = '10%';
+
+            const text = await file.text();
+            const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
+
+            if (lines.length < 2) {
+                alert('CSV file appears empty or missing headers.');
+                return resetUpload();
+            }
+
+            const headers = parseCSVLine(lines[0]).map(h => h.trim().toLowerCase());
+            const emailIndex = headers.findIndex(h => h === 'email');
+
+            if (emailIndex === -1) {
+                alert('CSV must contain a column named "email"');
+                return resetUpload();
+            }
+
+            uploadBar.style.width = '30%';
+            uploadPercent.textContent = '30%';
+
+            const parsedRecipients = [];
+            for (let i = 1; i < lines.length; i++) {
+                const values = parseCSVLine(lines[i]);
+                if (!values[emailIndex]) continue; // Skip rows with no email
+
+                const rowObj = {};
+                headers.forEach((h, index) => {
+                    rowObj[h] = values[index] || '';
+                });
+                parsedRecipients.push(rowObj);
+            }
+
+            uploadBar.style.width = '60%';
+            uploadPercent.textContent = '60%';
+
+            try {
+                const res = await fetch('/dashboard/campaigns/<%= campaign._id %>/upload', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ recipients: parsedRecipients })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    uploadBar.style.width = '100%';
+                    uploadPercent.textContent = '100%';
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 500);
+                } else {
+                    alert('Upload failed: ' + data.error);
+                    resetUpload();
+                }
+            } catch (err) {
+                alert('Network error during upload');
+                resetUpload();
+            }
+        }
+
+        function resetUpload() {
+            dropZone.classList.remove('hidden');
+            uploadProgress.classList.add('hidden');
+            fileInput.value = '';
+        }
+    </script>
+
+    <%- include('../../partials/dashboard_footer') %>

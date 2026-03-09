@@ -8,6 +8,8 @@ import dashboardRoutes from './routes/dashboard.js';
 import emailRoutes from './routes/email.js';
 import { createRequire } from 'module';
 import trackRoutes from './routes/track.js';
+import unsubscribeRoutes from './routes/unsubscribe.js';
+import { startCampaignWorker } from './services/campaignWorker.js';
 
 const require = createRequire(import.meta.url);
 const session = require('./tmp-install/node_modules/express-session');
@@ -42,6 +44,7 @@ app.use('/auth', authRoutes);
 app.use('/dashboard', dashboardRoutes);
 app.use('/api', emailRoutes);
 app.use('/track', trackRoutes);
+app.use('/unsubscribe', unsubscribeRoutes);
 
 // Redirect root to landing page
 app.get('/', (req, res) => res.render('index'));
@@ -51,6 +54,7 @@ mongoose
   .connect(MONGO_URI)
   .then(() => {
     console.log('✅  Connected to MongoDB');
+    startCampaignWorker();
     app.listen(PORT, () => {
       console.log(`🚀  Server running at http://localhost:${PORT}`);
     });

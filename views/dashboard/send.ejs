@@ -34,102 +34,91 @@
                             </div>
                             <% } %>
 
-                                <% if (!user.domainVerified) { %>
-                                    <div class="rounded-md bg-yellow-50 p-4 border border-yellow-200">
+                                <% if (!accounts || accounts.length===0) { %>
+                                    <div class="rounded-md bg-blue-50 p-4 border border-blue-200">
                                         <div class="flex">
                                             <div class="flex-shrink-0">
-                                                <i data-lucide="alert-triangle" class="h-5 w-5 text-yellow-400"></i>
+                                                <i data-lucide="info" class="h-5 w-5 text-blue-400"></i>
                                             </div>
                                             <div class="ml-3">
-                                                <h3 class="text-sm font-medium text-yellow-800">Domain Verification
-                                                    Required</h3>
-                                                <div class="mt-2 text-sm text-yellow-700">
-                                                    <p>You must verify your domain before you can send emails. <a
-                                                            href="/dashboard/domains"
-                                                            class="font-bold underline hover:text-yellow-600">Go to
-                                                            Domains menu</a>.</p>
+                                                <h3 class="text-sm font-medium text-blue-800">No Email Accounts
+                                                    Found</h3>
+                                                <div class="mt-2 text-sm text-blue-700">
+                                                    <p>Please create an email account prefix (like info@ or
+                                                        support@) first. <a href="/dashboard/accounts"
+                                                            class="font-bold underline hover:text-blue-600">Go to
+                                                            Email Accounts</a>.</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <% } else if (!accounts || accounts.length===0) { %>
-                                        <div class="rounded-md bg-blue-50 p-4 border border-blue-200">
-                                            <div class="flex">
-                                                <div class="flex-shrink-0">
-                                                    <i data-lucide="info" class="h-5 w-5 text-blue-400"></i>
+                                    <% } else { %>
+                                        <form action="/dashboard/send" method="POST" class="space-y-6">
+                                            <div>
+                                                <label for="fromAccount"
+                                                    class="block text-sm font-medium text-gray-700">From</label>
+                                                <div class="mt-1">
+                                                    <select id="fromAccount" name="fromAccount"
+                                                        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3"
+                                                        required <%=accounts && accounts.length===0 ? 'disabled' : ''
+                                                        %>>
+                                                        <% if (accounts && accounts.length> 0) { %>
+                                                            <% accounts.forEach(acc=> { %>
+                                                                <option value="<%= acc._id %>">
+                                                                    <%= acc.prefix %>@<%= acc.domain %>
+                                                                </option>
+                                                                <% }); %>
+                                                                    <% } else { %>
+                                                                        <option value="" disabled selected>No email
+                                                                            accounts configured</option>
+                                                                        <% } %>
+                                                    </select>
                                                 </div>
-                                                <div class="ml-3">
-                                                    <h3 class="text-sm font-medium text-blue-800">No Email Accounts
-                                                        Found</h3>
-                                                    <div class="mt-2 text-sm text-blue-700">
-                                                        <p>Please create an email account prefix (like info@ or
-                                                            support@) first. <a href="/dashboard/accounts"
-                                                                class="font-bold underline hover:text-blue-600">Go to
-                                                                Email Accounts</a>.</p>
-                                                    </div>
-                                                </div>
+                                                <p class="mt-2 text-sm text-gray-500" id="from-description">The sender
+                                                    email identity.</p>
                                             </div>
-                                        </div>
-                                        <% } else { %>
-                                            <form action="/dashboard/send" method="POST" class="space-y-6">
-                                                <div>
-                                                    <div class="w-full">
-                                                        <label for="fromAccount"
-                                                            class="block text-sm font-medium text-gray-700">From</label>
-                                                        <div class="mt-1">
-                                                            <select id="fromAccount" name="fromAccount"
-                                                                class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3"
-                                                                required <%=accounts && accounts.length===0 ? 'disabled'
-                                                                : '' %>>
-                                                                <% if (accounts && accounts.length> 0) { %>
-                                                                    <% accounts.forEach(acc=> { %>
-                                                                        <option value="<%= acc._id %>">
-                                                                            <%= acc.prefix %>@<%= acc.domain %>
-                                                                        </option>
-                                                                        <% }); %>
-                                                                            <% } else { %>
-                                                                                <option value="" disabled selected>No
-                                                                                    email accounts configured</option>
-                                                                                <% } %>
-                                                            </select>
-                                                        </div>
-                                                        <p class="mt-2 text-sm text-gray-500" id="from-description">The
-                                                            sender email identity.</p>
-                                                    </div> <input type="email" name="to" id="to"
+
+                                            <div>
+                                                <label for="to"
+                                                    class="block text-sm font-medium text-gray-700">To</label>
+                                                <div class="mt-1">
+                                                    <input type="email" name="to" id="to"
                                                         class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md border px-3 py-2"
                                                         placeholder="recipient@example.com" required>
                                                 </div>
-            </div>
+                                            </div>
 
-            <div>
-                <label for="subject" class="block text-sm font-medium text-gray-700">Subject</label>
-                <div class="mt-1">
-                    <input type="text" name="subject" id="subject"
-                        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md border px-3 py-2"
-                        placeholder="Email Subject" required>
-                </div>
-            </div>
+                                            <div>
+                                                <label for="subject"
+                                                    class="block text-sm font-medium text-gray-700">Subject</label>
+                                                <div class="mt-1">
+                                                    <input type="text" name="subject" id="subject"
+                                                        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md border px-3 py-2"
+                                                        placeholder="Email Subject" required>
+                                                </div>
+                                            </div>
 
-            <div>
-                <label for="body" class="block text-sm font-medium text-gray-700">Message</label>
-                <div class="mt-1">
-                    <textarea id="body" name="body" rows="6"
-                        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md px-3 py-2"
-                        placeholder="Type your message here..." required></textarea>
-                </div>
-            </div>
+                                            <div>
+                                                <label for="body"
+                                                    class="block text-sm font-medium text-gray-700">Message</label>
+                                                <div class="mt-1">
+                                                    <textarea id="body" name="body" rows="6"
+                                                        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md px-3 py-2"
+                                                        placeholder="Type your message here..." required></textarea>
+                                                </div>
+                                            </div>
 
-            <div class="flex justify-end">
-                <button type="submit"
-                    class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-150">
-                    <i data-lucide="send" class="h-4 w-4 mr-2"></i>
-                    Send Email
-                </button>
+                                            <div class="flex justify-end">
+                                                <button type="submit"
+                                                    class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-150">
+                                                    <i data-lucide="send" class="h-4 w-4 mr-2"></i>
+                                                    Send Email
+                                                </button>
+                                            </div>
+                                        </form>
+                                        <% } %>
             </div>
-            </form>
-            <% } %>
         </div>
-    </div>
     </div>
 
     <%- include('../partials/dashboard_footer') %>

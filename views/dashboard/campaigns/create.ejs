@@ -1,0 +1,79 @@
+<%- include('../../partials/dashboard_header', { title: 'New Campaign' , currentPath: '/dashboard/campaigns' }) %>
+
+    <div class="mb-8">
+        <a href="/dashboard/campaigns" class="text-sm text-indigo-600 hover:text-indigo-900 flex items-center mb-4">
+            <i data-lucide="arrow-left" class="h-4 w-4 mr-1"></i> Back to Campaigns
+        </a>
+        <h1 class="text-2xl font-semibold text-gray-900">Create New Campaign</h1>
+        <p class="mt-2 text-sm text-gray-700">Set up the email content for your bulk campaign.</p>
+    </div>
+
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg border border-gray-200">
+        <div class="px-4 py-5 sm:p-6">
+            <form action="/dashboard/campaigns" method="POST" class="space-y-6">
+
+                <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700">Campaign Name
+                            (Internal)</label>
+                        <div class="mt-1">
+                            <input type="text" name="name" id="name" required
+                                class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md px-3 py-2 border"
+                                placeholder="March Newsletter">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="senderAccount" class="block text-sm font-medium text-gray-700">Sender
+                            Identity</label>
+                        <div class="mt-1">
+                            <select id="senderAccount" name="senderAccount" required
+                                class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md px-3 py-2 border">
+                                <% if (accounts && accounts.length> 0) { %>
+                                    <% accounts.forEach(acc=> { %>
+                                        <option value="<%= acc._id %>">
+                                            <%= acc.prefix %>@<%= acc.domain %>
+                                        </option>
+                                        <% }); %>
+                                            <% } else { %>
+                                                <option value="" disabled selected>No active email accounts found
+                                                </option>
+                                                <% } %>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="subject" class="block text-sm font-medium text-gray-700">Email Subject</label>
+                    <div class="mt-1">
+                        <input type="text" name="subject" id="subject" required
+                            class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md px-3 py-2 border"
+                            placeholder="Welcome {{name}}! Check out our new features.">
+                    </div>
+                    <p class="mt-2 text-xs text-gray-500">You can use <code>{{ColumnName}}</code> to inject dynamic
+                        variables from your CSV file.</p>
+                </div>
+
+                <div>
+                    <label for="bodyHtml" class="block text-sm font-medium text-gray-700">Email Body (HTML/Text)</label>
+                    <div class="mt-1">
+                        <textarea id="bodyHtml" name="bodyHtml" rows="8" required
+                            class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md px-3 py-2 border"
+                            placeholder="<h1>Hi {{name}},</h1><p>...</p>"></textarea>
+                    </div>
+                    <p class="mt-2 text-xs text-gray-500">You can use <code>{{ColumnName}}</code> inside the body as
+                        well.</p>
+                </div>
+
+                <div class="flex justify-end">
+                    <button type="submit"
+                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Save Campaign Draft
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <%- include('../../partials/dashboard_footer') %>

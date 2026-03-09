@@ -7,6 +7,7 @@ import logsRoutes from './logs.js';
 import adminRoutes from './admin.js';
 import sendRoutes from './send.js';
 import docsRoutes from './docs.js';
+import campaignsRoutes from './campaigns.js';
 import Domain from '../models/Domain.js';
 import EmailAccount from '../models/EmailAccount.js';
 
@@ -51,5 +52,6 @@ router.use('/logs', logsRoutes);
 router.use('/admin', adminRoutes);
 router.use('/send', sendRoutes);
 router.use('/docs', docsRoutes);
+router.use('/campaigns', campaignsRoutes);
 
 export default router;
