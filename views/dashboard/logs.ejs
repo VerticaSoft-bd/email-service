@@ -35,7 +35,10 @@
                                             class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Subject
                                         </th>
                                         <th scope="col"
-                                            class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status
+                                            class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Delivery
+                                        </th>
+                                        <th scope="col"
+                                            class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Opened
                                         </th>
                                     </tr>
                                 </thead>
@@ -84,11 +87,27 @@
                                                                 </span>
                                                                 <% } %>
                                                 </td>
+                                                <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                                    <% if (log.opened) { %>
+                                                        <span
+                                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                            Opened (<%= log.openCount %>x)
+                                                        </span>
+                                                        <div class="text-xs text-gray-400 mt-1">
+                                                            <%= new Date(log.lastOpenedAt).toLocaleTimeString() %>
+                                                        </div>
+                                                        <% } else { %>
+                                                            <span
+                                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                                                                Unseen
+                                                            </span>
+                                                            <% } %>
+                                                </td>
                                             </tr>
                                             <% }) %>
                                                 <% } else { %>
                                                     <tr>
-                                                        <td colspan="5" class="py-10 text-center text-sm text-gray-500">
+                                                        <td colspan="6" class="py-10 text-center text-sm text-gray-500">
                                                             No email logs found. Access /api/send via your API key to
                                                             send an email.
                                                         </td>

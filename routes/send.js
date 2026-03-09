@@ -2,6 +2,7 @@ import { Router } from 'express';
 import EmailAccount from '../models/EmailAccount.js';
 import EmailLog from '../models/EmailLog.js';
 import { sendEmail } from '../services/ses.js';
+import mongoose from 'mongoose';
 
 const router = Router();
 
@@ -46,8 +47,13 @@ router.post('/', async (req, res) => {
         let messageId = null;
         let errorMessage = null;
 
+        const logId = new mongoose.Types.ObjectId();
+        const hostUrl = process.env.HOST_URL || `${req.protocol}://${req.get('host')}`;
+        const trackingPixel = `<img src="${hostUrl}/track/${logId}" width="1" height="1" style="display:none;" />`;
+        const htmlBody = body + trackingPixel;
+
         try {
-            const result = await sendEmail({ user: userWithSender, to, subject, body });
+            const result = await sendEmail({ user: userWithSender, to, subject, body: htmlBody });
             messageId = result.messageId;
 
             req.user.usage.emailsSent = (req.user.usage.emailsSent || 0) + 1;
@@ -59,6 +65,7 @@ router.post('/', async (req, res) => {
 
         // Log it
         const log = new EmailLog({
+            _id: logId,
             userId: req.user._id,
             sender: senderAddress,
             recipient: to,

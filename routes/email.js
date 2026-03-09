@@ -5,6 +5,7 @@ import User from '../models/User.js';
 import EmailLog from '../models/EmailLog.js';
 import { sendEmail } from '../services/ses.js';
 import EmailAccount from '../models/EmailAccount.js';
+import mongoose from 'mongoose';
 
 const router = Router();
 
@@ -71,10 +72,19 @@ router.post('/send', async (req, res) => {
 
         let status = 'Sent';
         let messageId = null;
-        let errorMessage = null;
+        // Temporarily prepare the log ID for the pixel tracking
+        const logId = new mongoose.Types.ObjectId();
+
+        // Include a 1x1 transparent tracking pixel in the body (Requires absolute URL, assuming current domain context)
+        // Usually, in a SaaS, the HOST_URL would be defined in .env
+        const hostUrl = process.env.HOST_URL || `${req.protocol}://${req.get('host')}`;
+        const trackingPixel = `<img src="${hostUrl}/track/${logId}" width="1" height="1" style="display:none;" />`;
+
+        // Ensure body format allows HTML tracking pixel
+        const htmlBody = body + trackingPixel;
 
         try {
-            const result = await sendEmail({ user: userWithSender, to, subject, body });
+            const result = await sendEmail({ user: userWithSender, to, subject, body: htmlBody });
             messageId = result.messageId;
 
             // Increment email usage
@@ -87,6 +97,7 @@ router.post('/send', async (req, res) => {
 
         // Log the email
         const log = new EmailLog({
+            _id: logId,
             userId: req.user._id,
             sender: senderAddress,
             recipient: to,

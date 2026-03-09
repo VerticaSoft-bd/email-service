@@ -7,6 +7,7 @@ import authRoutes from './routes/auth.js';
 import dashboardRoutes from './routes/dashboard.js';
 import emailRoutes from './routes/email.js';
 import { createRequire } from 'module';
+import trackRoutes from './routes/track.js';
 
 const require = createRequire(import.meta.url);
 const session = require('./tmp-install/node_modules/express-session');
@@ -40,6 +41,7 @@ app.set('views', join(__dirname, 'views'));
 app.use('/auth', authRoutes);
 app.use('/dashboard', dashboardRoutes);
 app.use('/api', emailRoutes);
+app.use('/track', trackRoutes);
 
 // Redirect root to landing page
 app.get('/', (req, res) => res.render('index'));

@@ -23,6 +23,17 @@ const emailLogSchema = new mongoose.Schema({
         enum: ['Sent', 'Delivered', 'Bounced', 'Failed', 'Complaint'],
         default: 'Sent'
     },
+    opened: {
+        type: Boolean,
+        default: false
+    },
+    openCount: {
+        type: Number,
+        default: 0
+    },
+    lastOpenedAt: {
+        type: Date
+    },
     messageId: {
         type: String // AWS SES message ID
     },
