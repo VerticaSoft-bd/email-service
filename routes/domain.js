@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import User from '../models/User.js';
+import Domain from '../models/Domain.js';
 import {
     verifyDomain,
     getDnsRecords,
@@ -11,80 +11,100 @@ const router = Router();
 // GET /dashboard/domains
 router.get('/', async (req, res) => {
     try {
-        const user = req.user;
-        const dnsRecords = getDnsRecords(user);
-        res.render('dashboard/domains', { dnsRecords, statusMessage: null, error: null });
+        const domains = await Domain.find({ userId: req.user._id }).sort({ createdAt: -1 });
+
+        const domainsWithRecords = domains.map(d => {
+            const records = getDnsRecords(d);
+            return { ...d.toObject(), dnsRecords: records };
+        });
+
+        res.render('dashboard/domains', { domains: domainsWithRecords, statusMessage: null, error: null });
     } catch (err) {
-        res.status(500).render('dashboard/domains', { dnsRecords: [], statusMessage: null, error: err.message });
+        res.status(500).render('dashboard/domains', { domains: [], statusMessage: null, error: err.message });
     }
 });
 
-// POST /dashboard/domains/verify
+// POST /dashboard/domains/verify (Add new domain)
 router.post('/verify', async (req, res) => {
     try {
-        const user = req.user;
-        const { domain } = req.body;
+        let { domainName } = req.body;
+        domainName = domainName.trim().toLowerCase();
 
-        if (domain) {
-            user.domain = domain;
-            await user.save();
+        if (!domainName) {
+            return res.redirect('/dashboard/domains?error=Please enter a domain.');
         }
 
-        if (!user.domain) {
-            return res.render('dashboard/domains', { dnsRecords: [], statusMessage: null, error: 'Please enter a domain.' });
+        // Check if exists
+        let domainDoc = await Domain.findOne({ userId: req.user._id, domain: domainName });
+        if (!domainDoc) {
+            domainDoc = new Domain({
+                userId: req.user._id,
+                domain: domainName
+            });
+            await domainDoc.save();
         }
 
-        const { verificationToken, dkimTokens } = await verifyDomain(user);
+        const { verificationToken, dkimTokens } = await verifyDomain(domainDoc);
 
         // Save tokens to DB
-        user.verificationToken = verificationToken;
-        user.dkimTokens = dkimTokens;
-        await user.save();
-
-        const dnsRecords = getDnsRecords(user);
+        domainDoc.verificationToken = verificationToken;
+        domainDoc.dkimTokens = dkimTokens;
+        await domainDoc.save();
 
         res.render('dashboard/domains', {
-            dnsRecords,
-            statusMessage: '✅ Domain verification initiated! Add the DNS records below to your domain registrar.',
+            domains: [{ ...domainDoc.toObject(), dnsRecords: getDnsRecords(domainDoc) }], // Show just this for a moment or redirect
+            statusMessage: `✅ Domain ${domainName} added! Please add the DNS records below to verify.`,
             error: null,
         });
+
     } catch (err) {
-        const dnsRecords = getDnsRecords(req.user);
+        const domains = await Domain.find({ userId: req.user._id }).sort({ createdAt: -1 });
+        const domainsWithRecords = domains.map(d => ({ ...d.toObject(), dnsRecords: getDnsRecords(d) }));
         res.render('dashboard/domains', {
-            dnsRecords,
+            domains: domainsWithRecords,
             statusMessage: null,
             error: `AWS SES Error: ${err.message}`,
         });
     }
 });
 
-// GET /dashboard/domains/status
-router.get('/status', async (req, res) => {
+// GET /dashboard/domains/:id/status
+router.get('/:id/status', async (req, res) => {
     try {
-        const user = req.user;
-        const { status, verified } = await checkVerificationStatus(user);
-
-        if (verified && !user.domainVerified) {
-            user.domainVerified = true;
-            await user.save();
+        const domainDoc = await Domain.findOne({ _id: req.params.id, userId: req.user._id });
+        if (!domainDoc) {
+            return res.redirect('/dashboard/domains?error=Domain not found.');
         }
 
-        const dnsRecords = getDnsRecords(user);
+        const { status, verified } = await checkVerificationStatus(domainDoc);
+
+        if (verified && !domainDoc.isVerified) {
+            domainDoc.isVerified = true;
+            await domainDoc.save();
+        }
+
+        const domains = await Domain.find({ userId: req.user._id }).sort({ createdAt: -1 });
+        const domainsWithRecords = domains.map(d => ({ ...d.toObject(), dnsRecords: getDnsRecords(d) }));
 
         res.render('dashboard/domains', {
-            dnsRecords,
+            domains: domainsWithRecords,
             statusMessage: verified
-                ? '🎉 Domain is verified! You can now create email accounts.'
-                : `⏳ Domain verification status: ${status}. Please wait for DNS propagation.`,
+                ? `🎉 ${domainDoc.domain} is verified! You can now create email accounts.`
+                : `⏳ ${domainDoc.domain} verification status: ${status}. Please wait for DNS propagation.`,
             error: null,
         });
     } catch (err) {
-        const dnsRecords = getDnsRecords(req.user);
-        res.render('dashboard/domains', {
-            dnsRecords,
-            statusMessage: null,
-            error: `Could not check status: ${err.message}`,
-        });
+        res.redirect(`/dashboard/domains?error=Could not check status: ${err.message}`);
+    }
+});
+
+// POST /dashboard/domains/:id/delete
+router.post('/:id/delete', async (req, res) => {
+    try {
+        await Domain.findOneAndDelete({ _id: req.params.id, userId: req.user._id });
+        res.redirect('/dashboard/domains');
+    } catch (err) {
+        res.redirect('/dashboard/domains');
     }
 });
 

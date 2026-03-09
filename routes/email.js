@@ -28,10 +28,6 @@ router.use(async (req, res, next) => {
         const user = await User.findById(apiKey.userId);
         if (!user) return res.status(401).json({ error: 'User associated with this key no longer exists.' });
 
-        if (!user.domainVerified) {
-            return res.status(403).json({ error: 'Domain is not verified yet. Please verify your domain in the dashboard.' });
-        }
-
         req.user = user;
         req.apiKey = apiKey;
 
@@ -51,23 +47,25 @@ router.use(async (req, res, next) => {
 
 router.post('/send', async (req, res) => {
     try {
-        const { to, subject, body, fromContext } = req.body;
-        // fromContext is optional prefix (e.g., 'info', 'support')
+        const { from, to, subject, body } = req.body;
 
         if (!to || !subject || !body) {
             return res.status(400).json({ error: 'Missing required fields: to, subject, body' });
         }
 
-        const prefix = fromContext ? fromContext.toLowerCase() : 'hello';
-
-        // Check if account prefix exists for this user to ensure they only send from identities they created
-        const account = await EmailAccount.findOne({ userId: req.user._id, prefix });
-        if (!account) {
-            return res.status(403).json({ error: `You have not created the email identity '${prefix}@${req.user.domain}'. Please create it in the dashboard.` });
+        const senderAddress = from ? from.toLowerCase() : user.senderEmail;
+        if (!senderAddress || !senderAddress.includes('@')) {
+            return res.status(400).json({ error: 'Invalid or missing from address.' });
         }
 
-        // The exact sender address
-        const senderAddress = `${prefix}@${req.user.domain}`;
+        const [prefix, domainName] = senderAddress.split('@');
+
+        // Check if account exists for this user
+        const account = await EmailAccount.findOne({ userId: req.user._id, prefix, domain: domainName });
+        if (!account) {
+            return res.status(403).json({ error: `You have not created the email identity '${senderAddress}'. Please create it in the dashboard.` });
+        }
+
         const userWithSender = { ...req.user.toObject(), senderEmail: senderAddress };
 
         let status = 'Sent';

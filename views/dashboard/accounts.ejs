@@ -37,10 +37,19 @@
                                             <input type="text" name="prefix" id="prefix"
                                                 class="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 border focus:z-10"
                                                 placeholder="info" required>
-                                            <span
-                                                class="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
-                                                @<%= user.domain || 'domain.com' %>
-                                            </span>
+                                            <select name="domainId"
+                                                class="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-700 sm:text-sm focus:ring-indigo-500 focus:border-indigo-500"
+                                                required>
+                                                <% if (domains && domains.length> 0) { %>
+                                                    <% domains.forEach(d=> { %>
+                                                        <option value="<%= d._id %>">@<%= d.domain %>
+                                                        </option>
+                                                        <% }) %>
+                                                            <% } else { %>
+                                                                <option value="" disabled selected>No Verified Domains
+                                                                </option>
+                                                                <% } %>
+                                            </select>
                                         </div>
                                     </div>
 
@@ -57,8 +66,9 @@
                                     <div class="pt-2">
                                         <button type="submit"
                                             class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                                            <%=!user.domainVerified ? 'disabled' : '' %>>
-                                            <%= !user.domainVerified ? 'Verify Domain First' : 'Create Account' %>
+                                            <%=(domains && domains.length===0) ? 'disabled' : '' %>>
+                                            <%= (domains && domains.length===0) ? 'Verify Domain First'
+                                                : 'Create Account' %>
                                         </button>
                                     </div>
                                 </form>

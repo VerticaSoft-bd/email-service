@@ -32,18 +32,18 @@ function createSesClient() {
  * Initiate domain verification with AWS SES.
  * Returns { verificationToken, dkimTokens }.
  */
-export async function verifyDomain(user) {
+export async function verifyDomain(domainRecord) {
     const client = createSesClient();
 
     // 1. Verify domain identity → get TXT verification token
     const identityRes = await client.send(
-        new VerifyDomainIdentityCommand({ Domain: user.domain })
+        new VerifyDomainIdentityCommand({ Domain: domainRecord.domain })
     );
     const verificationToken = identityRes.VerificationToken;
 
     // 2. Get DKIM tokens
     const dkimRes = await client.send(
-        new VerifyDomainDkimCommand({ Domain: user.domain })
+        new VerifyDomainDkimCommand({ Domain: domainRecord.domain })
     );
     const dkimTokens = dkimRes.DkimTokens || [];
 
@@ -53,25 +53,25 @@ export async function verifyDomain(user) {
 /**
  * Build the list of DNS records the user needs to add.
  */
-export function getDnsRecords(user) {
+export function getDnsRecords(domainRecord) {
     const records = [];
 
     // TXT record for domain verification
-    if (user.verificationToken) {
+    if (domainRecord.verificationToken) {
         records.push({
             type: 'TXT',
-            name: `_amazonses.${user.domain}`,
-            value: user.verificationToken,
+            name: `_amazonses.${domainRecord.domain}`,
+            value: domainRecord.verificationToken,
             purpose: 'Domain Verification',
         });
     }
 
     // CNAME records for DKIM
-    if (user.dkimTokens && user.dkimTokens.length > 0) {
-        user.dkimTokens.forEach((token, i) => {
+    if (domainRecord.dkimTokens && domainRecord.dkimTokens.length > 0) {
+        domainRecord.dkimTokens.forEach((token, i) => {
             records.push({
                 type: 'CNAME',
-                name: `${token}._domainkey.${user.domain}`,
+                name: `${token}._domainkey.${domainRecord.domain}`,
                 value: `${token}.dkim.amazonses.com`,
                 purpose: `DKIM Record ${i + 1}`,
             });
@@ -84,16 +84,16 @@ export function getDnsRecords(user) {
 /**
  * Check if the domain has been verified with SES.
  */
-export async function checkVerificationStatus(user) {
+export async function checkVerificationStatus(domainRecord) {
     const client = createSesClient();
 
     const res = await client.send(
         new GetIdentityVerificationAttributesCommand({
-            Identities: [user.domain],
+            Identities: [domainRecord.domain],
         })
     );
 
-    const attrs = res.VerificationAttributes?.[user.domain];
+    const attrs = res.VerificationAttributes?.[domainRecord.domain];
     return {
         status: attrs?.VerificationStatus || 'Pending',
         verified: attrs?.VerificationStatus === 'Success',

@@ -31,23 +31,6 @@ const userSchema = new mongoose.Schema({
         trim: true,
         lowercase: true,
     },
-    domain: {
-        type: String,
-        trim: true,
-        lowercase: true,
-    },
-    domainVerified: {
-        type: Boolean,
-        default: false,
-    },
-    dkimTokens: {
-        type: [String],
-        default: [],
-    },
-    verificationToken: {
-        type: String,
-        default: null,
-    },
     createdAt: {
         type: Date,
         default: Date.now,

@@ -30,10 +30,6 @@ router.post('/', async (req, res) => {
             return res.render('dashboard/send', { accounts, error: 'All fields are required.', success: null });
         }
 
-        if (!req.user.domainVerified) {
-            return res.render('dashboard/send', { accounts, error: 'Your domain is not verified yet.', success: null });
-        }
-
         // Validate that the user owns this account
         const account = accounts.find(a => a._id.toString() === fromAccount);
         if (!account) {
