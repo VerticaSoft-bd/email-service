@@ -1,0 +1,144 @@
+<%- include('../partials/dashboard_header', { title: 'Email Logs' , currentPath: '/dashboard/logs' }) %>
+    <div class="sm:flex sm:items-center justify-between">
+        <div class="sm:flex-auto">
+            <h1 class="text-2xl font-semibold text-gray-900">Email Logs</h1>
+            <p class="mt-2 text-sm text-gray-700">View a history of all transactional and bulk emails sent from your
+                authenticated domains.</p>
+        </div>
+    </div>
+
+    <div class="mt-8 flex flex-col">
+        <% if (error) { %>
+            <div class="mb-4 bg-red-50 border-l-4 border-red-400 p-4">
+                <p class="text-sm text-red-700">
+                    <%= error %>
+                </p>
+            </div>
+            <% } %>
+
+                <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                    <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+                        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+                            <table class="min-w-full divide-y divide-gray-300">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col"
+                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+                                            Timestamp</th>
+                                        <th scope="col"
+                                            class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Recipient
+                                        </th>
+                                        <th scope="col"
+                                            class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Sender
+                                        </th>
+                                        <th scope="col"
+                                            class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Subject
+                                        </th>
+                                        <th scope="col"
+                                            class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200 bg-white">
+                                    <% if (logs && logs.length> 0) { %>
+                                        <% logs.forEach(log=> { %>
+                                            <tr class="hover:bg-gray-50 transition-colors">
+                                                <td
+                                                    class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-500 sm:pl-6">
+                                                    <div class="flex flex-col">
+                                                        <span>
+                                                            <%= new Date(log.timestamp).toLocaleDateString() %>
+                                                        </span>
+                                                        <span class="text-xs text-gray-400">
+                                                            <%= new Date(log.timestamp).toLocaleTimeString() %>
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td
+                                                    class="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-900">
+                                                    <%= log.recipient %>
+                                                </td>
+                                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                                    <%= log.sender %>
+                                                </td>
+                                                <td class="px-3 py-4 text-sm text-gray-500 max-w-xs truncate"
+                                                    title="<%= log.subject %>">
+                                                    <%= log.subject %>
+                                                </td>
+                                                <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                                    <% if (log.status==='Sent' || log.status==='Delivered' ) { %>
+                                                        <span
+                                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                            <%= log.status %>
+                                                        </span>
+                                                        <% } else if (log.status==='Failed' || log.status==='Bounced' )
+                                                            { %>
+                                                            <span
+                                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                                <%= log.status %>
+                                                            </span>
+                                                            <% } else { %>
+                                                                <span
+                                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                                                    <%= log.status %>
+                                                                </span>
+                                                                <% } %>
+                                                </td>
+                                            </tr>
+                                            <% }) %>
+                                                <% } else { %>
+                                                    <tr>
+                                                        <td colspan="5" class="py-10 text-center text-sm text-gray-500">
+                                                            No email logs found. Access /api/send via your API key to
+                                                            send an email.
+                                                        </td>
+                                                    </tr>
+                                                    <% } %>
+                                </tbody>
+                            </table>
+
+                            <!-- Pagination -->
+                            <% if (pages> 1) { %>
+                                <div
+                                    class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+                                    <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                                        <div>
+                                            <p class="text-sm text-gray-700">
+                                                Showing page <span class="font-medium">
+                                                    <%= page %>
+                                                </span> of <span class="font-medium">
+                                                    <%= pages %>
+                                                </span>
+                                                (<span class="font-medium">
+                                                    <%= total %>
+                                                </span> results)
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+                                                aria-label="Pagination">
+                                                <% if (page> 1) { %>
+                                                    <a href="?page=<%= page - 1 %>"
+                                                        class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                                        <span class="sr-only">Previous</span>
+                                                        <i data-lucide="chevron-left" class="h-5 w-5"></i>
+                                                    </a>
+                                                    <% } %>
+
+                                                        <% if (page < pages) { %>
+                                                            <a href="?page=<%= page + 1 %>"
+                                                                class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                                                <span class="sr-only">Next</span>
+                                                                <i data-lucide="chevron-right" class="h-5 w-5"></i>
+                                                            </a>
+                                                            <% } %>
+                                            </nav>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% } %>
+                        </div>
+                    </div>
+                </div>
+    </div>
+    <%- include('../partials/dashboard_footer') %>

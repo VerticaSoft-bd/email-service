@@ -1,0 +1,18 @@
+{
+    "name": "email-saas",
+    "version": "1.0.0",
+    "description": "Email SaaS Prototype — register senders with AWS SES credentials",
+    "main": "app.js",
+    "type": "module",
+    "scripts": {
+        "start": "NODE_PATH=./tmp-install/node_modules node app.js",
+        "dev": "NODE_PATH=./tmp-install/node_modules nodemon app.js"
+    },
+    "dependencies": {
+        "@aws-sdk/client-ses": "^3.x",
+        "dotenv": "^17.3.1",
+        "ejs": "^5.0.1",
+        "express": "^5.2.1",
+        "mongoose": "^9.2.4"
+    }
+}

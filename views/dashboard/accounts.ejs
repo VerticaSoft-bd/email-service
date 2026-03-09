@@ -1,0 +1,122 @@
+<%- include('../partials/dashboard_header', { title: 'Email Accounts' , currentPath: '/dashboard/accounts' }) %>
+    <div class="sm:flex sm:items-center justify-between">
+        <div class="sm:flex-auto">
+            <h1 class="text-2xl font-semibold text-gray-900">Email Accounts</h1>
+            <p class="mt-2 text-sm text-gray-700">Create and manage email identities (e.g., info@, support@) under your
+                verified domain.</p>
+        </div>
+    </div>
+
+    <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <!-- Form to create account -->
+        <div class="bg-white shadow sm:rounded-lg lg:col-span-1 border border-gray-200 self-start">
+            <div class="px-4 py-5 sm:p-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">New Email Account</h3>
+
+                <% if (error) { %>
+                    <div class="mt-4 bg-red-50 border-l-4 border-red-400 p-4">
+                        <p class="text-sm text-red-700">
+                            <%= error %>
+                        </p>
+                    </div>
+                    <% } %>
+
+                        <% if (success) { %>
+                            <div class="mt-4 bg-green-50 border-l-4 border-green-400 p-4">
+                                <p class="text-sm text-green-700">
+                                    <%= success %>
+                                </p>
+                            </div>
+                            <% } %>
+
+                                <form action="/dashboard/accounts" method="POST" class="mt-5 space-y-4">
+                                    <div>
+                                        <label for="prefix" class="block text-sm font-medium text-gray-700">Email
+                                            Prefix</label>
+                                        <div class="mt-1 flex rounded-md shadow-sm">
+                                            <input type="text" name="prefix" id="prefix"
+                                                class="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 border focus:z-10"
+                                                placeholder="info" required>
+                                            <span
+                                                class="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
+                                                @<%= user.domain || 'domain.com' %>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label for="password"
+                                            class="block text-sm font-medium text-gray-700">Password</label>
+                                        <div class="mt-1">
+                                            <input type="password" name="password" id="password"
+                                                class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 px-3 py-2 rounded-md"
+                                                required>
+                                        </div>
+                                    </div>
+
+                                    <div class="pt-2">
+                                        <button type="submit"
+                                            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                            <%=!user.domainVerified ? 'disabled' : '' %>>
+                                            <%= !user.domainVerified ? 'Verify Domain First' : 'Create Account' %>
+                                        </button>
+                                    </div>
+                                </form>
+            </div>
+        </div>
+
+        <!-- Active Accounts List -->
+        <div class="bg-white shadow sm:rounded-lg lg:col-span-2 border border-gray-200">
+            <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Active Accounts</h3>
+            </div>
+            <ul role="list" class="divide-y divide-gray-200">
+                <% if (accounts && accounts.length> 0) { %>
+                    <% accounts.forEach(account=> { %>
+                        <li
+                            class="px-4 py-4 sm:px-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                            <div class="flex items-center space-x-4 border border-transparent">
+                                <div class="flex-shrink-0">
+                                    <span
+                                        class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-indigo-100">
+                                        <span class="text-md font-medium leading-none text-indigo-700">
+                                            <%= account.prefix[0].toUpperCase() %>
+                                        </span>
+                                    </span>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900 truncate">
+                                        <%= account.prefix %>@<%= account.domain %>
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        <%= account.mailboxSize %> MB storage • Created <%= new
+                                                Date(account.createdAt).toLocaleDateString() %>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="ml-4 flex-shrink-0 flex items-center justify-center space-x-2">
+                                <span
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
+                                    Active
+                                </span>
+                                <form action="/dashboard/accounts/<%= account._id %>/delete" method="POST"
+                                    onsubmit="return confirm('Are you sure you want to delete this email account?');">
+                                    <button type="submit"
+                                        class="text-red-600 hover:text-red-900 bg-red-50 p-1.5 rounded-md hover:bg-red-100 transition-colors border border-transparent border-red-100"
+                                        title="Delete">
+                                        <i data-lucide="trash-2" class="h-4 w-4"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </li>
+                        <% }) %>
+                            <% } else { %>
+                                <li class="px-4 py-8 text-center sm:px-6 text-gray-500 text-sm">
+                                    No email accounts created yet. Use the form to your left to generate your first
+                                    account.
+                                </li>
+                                <% } %>
+            </ul>
+        </div>
+    </div>
+    <%- include('../partials/dashboard_footer') %>

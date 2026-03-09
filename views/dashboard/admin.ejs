@@ -1,0 +1,95 @@
+<%- include('../partials/dashboard_header', { title: 'Admin Panel' , currentPath: '/dashboard/admin' }) %>
+    <div class="sm:flex sm:items-center justify-between">
+        <div class="sm:flex-auto">
+            <h1 class="text-2xl font-semibold text-gray-900">Admin Panel</h1>
+            <p class="mt-2 text-sm text-gray-700">Global statistics and user management.</p>
+        </div>
+    </div>
+
+    <% if (error) { %>
+        <div class="mt-4 bg-red-50 border-l-4 border-red-400 p-4">
+            <p class="text-sm text-red-700">
+                <%= error %>
+            </p>
+        </div>
+        <% } %>
+
+            <div class="mt-8">
+                <dl
+                    class="mt-5 grid grid-cols-1 rounded-lg bg-white overflow-hidden shadow divide-y divide-gray-200 md:grid-cols-4 md:divide-y-0 md:divide-x border border-gray-200">
+                    <div class="px-4 py-5 sm:p-6 text-center">
+                        <dt class="text-base font-normal text-gray-900">Total Users</dt>
+                        <dd class="mt-1 flex justify-center items-baseline md:block lg:flex">
+                            <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
+                                <%= stats.totalUsers || 0 %>
+                            </div>
+                        </dd>
+                    </div>
+                    <div class="px-4 py-5 sm:p-6 text-center">
+                        <dt class="text-base font-normal text-gray-900">Verified Domains</dt>
+                        <dd class="mt-1 flex justify-center items-baseline md:block lg:flex">
+                            <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
+                                <%= stats.totalDomains || 0 %>
+                            </div>
+                        </dd>
+                    </div>
+                    <div class="px-4 py-5 sm:p-6 text-center">
+                        <dt class="text-base font-normal text-gray-900">Email Accounts</dt>
+                        <dd class="mt-1 flex justify-center items-baseline md:block lg:flex">
+                            <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
+                                <%= stats.totalAccounts || 0 %>
+                            </div>
+                        </dd>
+                    </div>
+                    <div class="px-4 py-5 sm:p-6 text-center">
+                        <dt class="text-base font-normal text-gray-900">Emails Sent</dt>
+                        <dd class="mt-1 flex justify-center items-baseline md:block lg:flex">
+                            <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
+                                <%= stats.totalEmailsSent || 0 %>
+                            </div>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+
+            <div class="mt-12 bg-white shadow sm:rounded-lg border border-gray-200">
+                <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">Recent Users</h3>
+                </div>
+                <ul role="list" class="divide-y divide-gray-200">
+                    <% if (users && users.length> 0) { %>
+                        <% users.forEach(u=> { %>
+                            <li
+                                class="px-4 py-4 sm:px-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                                <div class="flex flex-col">
+                                    <p class="text-sm font-medium text-gray-900">
+                                        <%= u.name %> <span class="text-xs text-gray-500">(<%= u.email %>)</span>
+                                    </p>
+                                    <p class="text-xs text-gray-500 mt-1">
+                                        Domain: <%= u.domain || 'N/A' %>
+                                            <% if (u.domainVerified) { %> <span class="text-green-600 font-medium">✓
+                                                    Verified</span>
+                                                <% } %>
+                                    </p>
+                                    <p class="text-xs text-gray-500 mt-1">Usage: <%= u.usage?.emailsSent || 0 %> emails
+                                            | Role: <span
+                                                class="<%= u.role === 'admin' ? 'text-indigo-600 font-bold' : (u.role === 'suspended' ? 'text-red-600 font-bold' : '') %>">
+                                                <%= u.role %>
+                                            </span></p>
+                                </div>
+                                <div class="ml-4 flex-shrink-0 flex items-center justify-center space-x-2">
+                                    <% if (u.role !=='admin' ) { %>
+                                        <form action="/dashboard/admin/user/<%= u._id %>/suspend" method="POST">
+                                            <button type="submit"
+                                                class="inline-flex items-center px-2.5 py-1.5 border <%= u.role === 'suspended' ? 'border-green-300 text-green-700 hover:bg-green-50' : 'border-red-300 text-red-700 hover:bg-red-50' %> shadow-sm text-xs font-medium rounded bg-white focus:outline-none transition-colors">
+                                                <%= u.role==='suspended' ? 'Unsuspend' : 'Suspend' %>
+                                            </button>
+                                        </form>
+                                        <% } %>
+                                </div>
+                            </li>
+                            <% }) %>
+                                <% } %>
+                </ul>
+            </div>
+            <%- include('../partials/dashboard_footer') %>
