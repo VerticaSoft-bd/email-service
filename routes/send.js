@@ -50,7 +50,13 @@ router.post('/', async (req, res) => {
         const logId = new mongoose.Types.ObjectId();
         const hostUrl = process.env.HOST_URL || `${req.protocol}://${req.get('host')}`;
         const trackingPixel = `<img src="${hostUrl}/track/${logId}" width="1" height="1" style="display:none;" />`;
-        const htmlBody = body + trackingPixel;
+
+        let finalBody = body;
+        if (account.signature) {
+            finalBody += `<br><br>${account.signature}`;
+        }
+
+        const htmlBody = finalBody + trackingPixel;
 
         try {
             const result = await sendEmail({ user: userWithSender, to, subject, body: htmlBody });

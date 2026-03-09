@@ -59,4 +59,17 @@ router.post('/:id/delete', async (req, res) => {
     }
 });
 
+router.post('/:id/signature', async (req, res) => {
+    try {
+        const { signature } = req.body;
+        await EmailAccount.findOneAndUpdate(
+            { _id: req.params.id, userId: req.user._id },
+            { signature }
+        );
+        res.redirect('/dashboard/accounts');
+    } catch (err) {
+        res.redirect('/dashboard/accounts');
+    }
+});
+
 export default router;

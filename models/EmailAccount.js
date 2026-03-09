@@ -30,6 +30,10 @@ const emailAccountSchema = new mongoose.Schema({
         type: String,
         default: 'member'
     },
+    signature: {
+        type: String,
+        default: ''
+    },
     createdAt: {
         type: Date,
         default: Date.now
