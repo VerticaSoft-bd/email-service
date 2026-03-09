@@ -1,0 +1,229 @@
+<%- include('../partials/dashboard_header', { title: 'API Documentation' , currentPath: '/dashboard/docs' }) %>
+
+    <div class="sm:flex sm:items-center justify-between">
+        <div class="sm:flex-auto">
+            <h1 class="text-2xl font-semibold text-gray-900">API Documentation</h1>
+            <p class="mt-2 text-sm text-gray-700">Integrate our transactional email engine into your application using
+                your preferred programming language.</p>
+        </div>
+    </div>
+
+    <div class="mt-8">
+        <div class="bg-white shadow sm:rounded-lg border border-gray-200 overflow-hidden">
+            <div class="px-4 py-5 sm:px-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Authentication & Endpoint</h3>
+                <a href="/dashboard/apikeys" class="text-sm text-indigo-600 hover:text-indigo-900 font-medium">Get API
+                    Key &rarr;</a>
+            </div>
+            <div class="px-4 py-5 sm:p-6">
+                <p class="text-sm text-gray-700 mb-4">
+                    To send an email, make a <code>POST</code> request to the endpoint below. You must include your API
+                    Key in the <code>Authorization</code> header as a Bearer token.
+                </p>
+
+                <div class="bg-gray-900 rounded-md p-4 mb-6 relative group flex items-center">
+                    <span class="text-green-400 font-mono text-sm font-bold mr-4">POST</span>
+                    <code
+                        class="text-gray-100 font-mono text-sm leading-relaxed whitespace-pre overflow-x-auto"><%= apiUrl %></code>
+                </div>
+
+                <h4 class="text-md font-medium text-gray-900 mb-2">Request Body (JSON)</h4>
+                <div class="bg-gray-50 rounded-md p-4 mb-8 border border-gray-200">
+                    <pre class="text-sm text-gray-800 font-mono"><code>{
+  "to": "recipient@example.com",
+  "subject": "Hello from our app!",
+  "body": "This is the HTML or plain text content of the email.",
+  "fromContext": "info"  // The prefix of your created email account (e.g. info, support)
+}</code></pre>
+                </div>
+
+                <!-- Code Snippets Tabs -->
+                <div class="mt-8">
+                    <h4 class="text-md font-medium text-gray-900 mb-4">Code Examples</h4>
+
+                    <div class="border-b border-gray-200">
+                        <nav class="-mb-px flex space-x-8" aria-label="Tabs" id="docs-tabs">
+                            <button onclick="switchTab('curl')" id="tab-curl"
+                                class="border-indigo-500 text-indigo-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+                                cURL
+                            </button>
+                            <button onclick="switchTab('node')" id="tab-node"
+                                class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+                                Node.js (Fetch)
+                            </button>
+                            <button onclick="switchTab('php')" id="tab-php"
+                                class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+                                PHP (cURL)
+                            </button>
+                            <button onclick="switchTab('python')" id="tab-python"
+                                class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+                                Python (Requests)
+                            </button>
+                        </nav>
+                    </div>
+
+                    <div class="mt-4 relative rounded-md bg-gray-900 shadow-sm border border-gray-800 overflow-hidden">
+                        <div class="absolute right-0 top-0 p-3">
+                            <button onclick="copyCode()" class="text-gray-400 hover:text-white transition-colors"
+                                title="Copy to clipboard">
+                                <i data-lucide="copy" class="h-5 w-5"></i>
+                            </button>
+                        </div>
+
+                        <!-- cURL Snippet -->
+                        <div id="snippet-curl" class="code-snippet block p-4 overflow-x-auto">
+                            <pre class="text-gray-300 font-mono text-sm leading-relaxed"><code>curl -X POST <%= apiUrl %> \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk_YOUR_API_KEY_HERE" \
+  -d '{
+    "to": "customer@gmail.com",
+    "subject": "Welcome to our platform!",
+    "body": "Hi there, thank you for joining us.",
+    "fromContext": "info"
+  }'</code></pre>
+                        </div>
+
+                        <!-- Node.js Snippet -->
+                        <div id="snippet-node" class="code-snippet hidden p-4 overflow-x-auto">
+                            <pre class="text-gray-300 font-mono text-sm leading-relaxed"><code>const sendEmail = async () => {
+  try {
+    const response = await fetch('<%= apiUrl %>', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer sk_YOUR_API_KEY_HERE'
+      },
+      body: JSON.stringify({
+        to: 'customer@gmail.com',
+        subject: 'Welcome to our platform!',
+        body: 'Hi there, thank you for joining us.',
+        fromContext: 'info'
+      })
+    });
+
+    const data = await response.json();
+    console.log('Success:', data);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+sendEmail();</code></pre>
+                        </div>
+
+                        <!-- PHP Snippet -->
+                        <div id="snippet-php" class="code-snippet hidden p-4 overflow-x-auto">
+                            <pre class="text-gray-300 font-mono text-sm leading-relaxed"><code>&lt;?php
+
+$curl = curl_init();
+
+$payload = json_encode([
+  "to" => "customer@gmail.com",
+  "subject" => "Welcome to our platform!",
+  "body" => "Hi there, thank you for joining us.",
+  "fromContext" => "info"
+]);
+
+curl_setopt_array($curl, [
+  CURLOPT_URL => "<%= apiUrl %>",
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_CUSTOMREQUEST => "POST",
+  CURLOPT_POSTFIELDS => $payload,
+  CURLOPT_HTTPHEADER => [
+    "Content-Type: application/json",
+    "Authorization: Bearer sk_YOUR_API_KEY_HERE"
+  ],
+]);
+
+$response = curl_exec($curl);
+$err = curl_error($curl);
+curl_close($curl);
+
+if ($err) {
+  echo "cURL Error #:" . $err;
+} else {
+  echo $response;
+}</code></pre>
+                        </div>
+
+                        <!-- Python Snippet -->
+                        <div id="snippet-python" class="code-snippet hidden p-4 overflow-x-auto">
+                            <pre class="text-gray-300 font-mono text-sm leading-relaxed"><code>import requests
+import json
+
+url = "<%= apiUrl %>"
+
+payload = json.dumps({
+  "to": "customer@gmail.com",
+  "subject": "Welcome to our platform!",
+  "body": "Hi there, thank you for joining us.",
+  "fromContext": "info"
+})
+
+headers = {
+  'Content-Type': 'application/json',
+  'Authorization': 'Bearer sk_YOUR_API_KEY_HERE'
+}
+
+response = requests.request("POST", url, headers=headers, data=payload)
+
+print(response.text)</code></pre>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab Switching Logic
+        const tabs = ['curl', 'node', 'php', 'python'];
+        let currentTab = 'curl';
+
+        function switchTab(tabId) {
+            currentTab = tabId;
+            // Hide all snippets
+            document.querySelectorAll('.code-snippet').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.code-snippet').forEach(el => el.classList.remove('block'));
+
+            // Show selected snippet
+            const selectedSnippet = document.getElementById('snippet-' + tabId);
+            selectedSnippet.classList.remove('hidden');
+            selectedSnippet.classList.add('block');
+
+            // Reset tab styling
+            tabs.forEach(tab => {
+                const btn = document.getElementById('tab-' + tab);
+                btn.classList.remove('border-indigo-500', 'text-indigo-600');
+                btn.classList.add('border-transparent', 'text-gray-500');
+            });
+
+            // Active tab styling
+            const activeBtn = document.getElementById('tab-' + tabId);
+            activeBtn.classList.remove('border-transparent', 'text-gray-500');
+            activeBtn.classList.add('border-indigo-500', 'text-indigo-600');
+        }
+
+        // Copy to clipboard logic
+        function copyCode() {
+            const snippetEl = document.querySelector('#snippet-' + currentTab + ' code');
+            if (!snippetEl) return;
+
+            const codeText = snippetEl.innerText;
+            navigator.clipboard.writeText(codeText).then(() => {
+                // Provide feedback
+                const btn = document.querySelector('button[onclick="copyCode()"]');
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<span class="text-green-400 text-xs font-medium mr-2">Copied!</span><i data-lucide="check" class="h-5 w-5 text-green-400"></i>';
+                lucide.createIcons();
+
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    lucide.createIcons();
+                }, 2000);
+            });
+        }
+    </script>
+
+    <%- include('../partials/dashboard_footer') %>
