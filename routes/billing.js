@@ -132,4 +132,18 @@ router.get('/cancel', async (req, res) => {
     res.redirect('/dashboard/billing?error=PaymentCancelled');
 });
 
+// GET Invoice
+router.get('/invoice/:id', async (req, res) => {
+    try {
+        const order = await Order.findOne({ _id: req.params.id, userId: req.user._id });
+        if (!order) {
+            return res.status(404).send('Invoice not found');
+        }
+        res.render('dashboard/invoice', { order, user: req.user });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error loading invoice');
+    }
+});
+
 export default router;

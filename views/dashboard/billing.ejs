@@ -140,7 +140,7 @@
                                         <%= new Date(order.createdAt).toLocaleString() %>
                                     </p>
                                 </div>
-                                <div>
+                                <div class="flex items-center space-x-4">
                                     <% if (order.status==='completed' ) { %>
                                         <span
                                             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Paid</span>
@@ -151,6 +151,12 @@
                                                 <span
                                                     class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Pending</span>
                                                 <% } %>
+
+                                                    <a href="/dashboard/billing/invoice/<%= order._id %>"
+                                                        target="_blank"
+                                                        class="text-indigo-600 hover:text-indigo-900 border border-indigo-200 bg-indigo-50 px-3 py-1.5 rounded-md text-xs font-medium flex items-center transition-colors">
+                                                        <i data-lucide="download" class="w-4 h-4 mr-1.5"></i> Invoice
+                                                    </a>
                                 </div>
                             </div>
                         </li>
