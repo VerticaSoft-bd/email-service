@@ -86,21 +86,32 @@ router.post('/checkout', async (req, res) => {
     }
 });
 
-// GET Callback (IPN / Return URL)
-router.get('/callback', async (req, res) => {
+// GET/POST Callback (IPN / Return URL)
+router.all('/callback', async (req, res) => {
     try {
         // PayStation typically sends back query params like ?invoice_number=INV-XXXX&status=success&trx_id=XXXX
-        const { invoice_number, status, trx_id } = req.query;
+        // We use req.query for GET results, or req.body for POST-based IPNs
+        const { invoice_number, status, trx_id } = req.method === 'POST' ? req.body : req.query;
 
-        if (!invoice_number) return res.redirect('/dashboard/billing');
+        console.log(`[Billing] Callback received - Invoice: ${invoice_number}, Status: ${status}, TrxID: ${trx_id}`);
+
+        if (!invoice_number) {
+            console.error("[Billing] Error: Missing invoice_number in callback");
+            return res.redirect('/dashboard/billing');
+        }
 
         const order = await Order.findOne({ invoice_number });
 
         if (!order) {
+            console.error(`[Billing] Error: Order not found for invoice: ${invoice_number}`);
             return res.send("Order not found.");
         }
 
-        if (status === 'success' || status === 'Successful') {
+        // Standardizing status check to be case-insensitive and handle 'success' or 'Successful'
+        const normalizedStatus = status ? status.toLowerCase() : '';
+        const isSuccess = normalizedStatus === 'success' || normalizedStatus === 'successful';
+
+        if (isSuccess) {
             order.status = 'completed';
             order.trxId = trx_id;
             await order.save();
@@ -109,20 +120,23 @@ router.get('/callback', async (req, res) => {
             const expiryDate = new Date();
             expiryDate.setMonth(expiryDate.getMonth() + 1); // 1 Month validity
 
-            await User.findByIdAndUpdate(order.userId, {
+            const updatedUser = await User.findByIdAndUpdate(order.userId, {
                 plan: order.plan,
                 subscriptionExpiry: expiryDate
-            });
+            }, { new: true });
+
+            console.log(`[Billing] Plan activated for user ${order.userId}: ${order.plan}`);
 
             return res.redirect('/dashboard/billing?success=PaymentSuccessful');
         } else {
+            console.warn(`[Billing] Payment failed for invoice: ${invoice_number}. Status: ${status}`);
             order.status = 'failed';
             await order.save();
             return res.redirect('/dashboard/billing?error=PaymentFailed');
         }
 
     } catch (err) {
-        console.error("Callback Error:", err);
+        console.error("[Billing] Callback Error:", err);
         res.redirect('/dashboard/billing');
     }
 });
