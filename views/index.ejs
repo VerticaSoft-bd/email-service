@@ -249,108 +249,167 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- PRICING SECTION -->
-    <div id="pricing" class="py-24 bg-gray-50 border-t border-gray-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase">Pricing</h2>
-                <p class="mt-2 text-3xl font-extrabold text-gray-900 sm:text-4xl">
-                    Simple, transparent pricing
+    </div>    <!-- PREMIUM PRICING SECTION -->
+    <div id="pricing" class="py-24 bg-white relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-gray-100 to-transparent"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-3xl mx-auto mb-20">
+                <h2 class="text-indigo-600 font-black text-sm uppercase tracking-[0.2em] mb-4">Investment Plans</h2>
+                <p class="text-4xl lg:text-5xl font-black text-gray-900 leading-tight">
+                    Scale your communications <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">without the complexity.</span>
                 </p>
-                <p class="mt-4 text-lg text-gray-500">
-                    No hidden fees. Pick the plan that scales with your growth.
+                <p class="mt-6 text-lg text-gray-500 font-medium">
+                    Transparent infrastructure pricing for teams that demand excellence.
                 </p>
             </div>
 
-            <div class="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-center">
+            <div class="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch">
 
                 <!-- Starter Plan -->
-                <div
-                    class="bg-white rounded-3xl shadow-sm border border-gray-200 p-8 hover:shadow-lg transition-shadow duration-300">
-                    <h3 class="text-xl font-semibold text-gray-900">Starter</h3>
-                    <p class="text-gray-500 text-sm mt-2">Perfect for side projects and early startups.</p>
-                    <div class="my-6">
-                        <span class="text-5xl font-extrabold text-gray-900">৳0</span>
-                        <span class="text-gray-500 font-medium whitespace-nowrap">/month</span>
+                <div class="group bg-gray-50/50 rounded-[2.5rem] p-10 border border-gray-100 hover:bg-white hover:shadow-2xl hover:border-indigo-100 transition-all duration-500 flex flex-col">
+                    <div class="mb-8">
+                        <h3 class="text-xl font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">Starter</h3>
+                        <p class="text-gray-400 text-sm mt-2 font-medium">For independent creators & early prototypes.</p>
                     </div>
-                    <ul class="space-y-4 mb-8 text-gray-600 text-sm">
-                        <li class="flex items-center"><i data-lucide="check"
-                                class="w-4 h-4 text-green-500 mr-3 flex-shrink-0"></i> 1 Verified Domain</li>
-                        <li class="flex items-center"><i data-lucide="check"
-                                class="w-4 h-4 text-green-500 mr-3 flex-shrink-0"></i> Up to 5 Email Identites</li>
-                        <li class="flex items-center"><i data-lucide="check"
-                                class="w-4 h-4 text-green-500 mr-3 flex-shrink-0"></i> 100 Emails / month</li>
-                        <li class="flex items-center"><i data-lucide="check"
-                                class="w-4 h-4 text-green-500 mr-3 flex-shrink-0"></i> Standard Support</li>
+                    
+                    <div class="mb-10">
+                        <div class="flex items-baseline">
+                            <span class="text-5xl font-black text-gray-900">৳0</span>
+                            <span class="ml-2 text-gray-400 font-bold text-sm uppercase tracking-wider">/mo</span>
+                        </div>
+                        <div class="mt-2 text-xs font-bold text-green-600 uppercase tracking-widest bg-green-50 inline-block px-2 py-1 rounded">Free Forever</div>
+                    </div>
+
+                    <ul class="space-y-5 mb-12 flex-grow">
+                        <li class="flex items-center text-sm font-semibold text-gray-600">
+                            <div class="w-5 h-5 rounded-full bg-green-100 text-green-600 flex items-center justify-center mr-4 flex-shrink-0">
+                                <i data-lucide="check" class="w-3 h-3"></i>
+                            </div>
+                            1 Verified Domain
+                        </li>
+                        <li class="flex items-center text-sm font-semibold text-gray-600">
+                            <div class="w-5 h-5 rounded-full bg-green-100 text-green-600 flex items-center justify-center mr-4 flex-shrink-0">
+                                <i data-lucide="check" class="w-3 h-3"></i>
+                            </div>
+                            5 Email Identities
+                        </li>
+                        <li class="flex items-center text-sm font-semibold text-gray-600">
+                            <div class="w-5 h-5 rounded-full bg-green-100 text-green-600 flex items-center justify-center mr-4 flex-shrink-0">
+                                <i data-lucide="check" class="w-3 h-3"></i>
+                            </div>
+                            100 Emails / month
+                        </li>
+                        <li class="flex items-center text-sm font-semibold text-gray-400">
+                            <div class="w-5 h-5 rounded-full bg-gray-100 text-gray-300 flex items-center justify-center mr-4 flex-shrink-0">
+                                <i data-lucide="minus" class="w-3 h-3"></i>
+                            </div>
+                            Standard Delivery
+                        </li>
                     </ul>
-                    <a href="/auth/register"
-                        class="block w-full py-3 px-4 text-center rounded-xl font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition-colors">Get
-                        Started</a>
+
+                    <a href="/auth/register" class="w-full py-4 text-center rounded-2xl font-black text-sm uppercase tracking-widest transition-all duration-300 bg-white border border-gray-200 text-gray-900 group-hover:bg-gray-900 group-hover:text-white group-hover:border-gray-900 shadow-sm">
+                        Get Started
+                    </a>
                 </div>
 
-                <!-- Pro Plan (Highlighted) -->
-                <div
-                    class="bg-gray-900 rounded-3xl shadow-2xl border border-gray-800 p-8 transform lg:-translate-y-4 relative">
-                    <div class="absolute top-0 right-8 transform -translate-y-1/2">
-                        <span
-                            class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-xs font-bold uppercase tracking-wider py-1 px-3 rounded-full">Most
-                            Popular</span>
+                <!-- Professional Plan -->
+                <div class="relative bg-gray-900 rounded-[2.5rem] p-12 shadow-2xl transform lg:-translate-y-6 flex flex-col border-4 border-indigo-600/20">
+                    <div class="absolute -top-5 left-1/2 transform -translate-x-1/2">
+                        <span class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-[10px] font-black uppercase tracking-[0.2em] py-2 px-6 rounded-full shadow-xl">
+                            Most Selected
+                        </span>
                     </div>
-                    <h3 class="text-xl font-semibold text-white">Professional</h3>
-                    <p class="text-gray-400 text-sm mt-2">For growing businesses needing scale.</p>
-                    <div class="my-6">
-                        <span class="text-5xl font-extrabold text-white">৳599</span>
-                        <!-- Cost (AWS SES): ~৳130
-আপনার profit: ~৳470 -->
-                        <span class="text-gray-400 font-medium whitespace-nowrap">/month</span>
+
+                    <div class="mb-8">
+                        <h3 class="text-xl font-bold text-white">Professional</h3>
+                        <p class="text-gray-400 text-sm mt-2 font-medium">Optimized for growing teams & agencies.</p>
                     </div>
-                    <ul class="space-y-4 mb-8 text-gray-300 text-sm">
-                        <li class="flex items-center"><i data-lucide="check"
-                                class="w-4 h-4 text-indigo-400 mr-3 flex-shrink-0"></i> 5 Verified Domains</li>
-                        <li class="flex items-center"><i data-lucide="check"
-                                class="w-4 h-4 text-indigo-400 mr-3 flex-shrink-0"></i> Unlimited Email Identities</li>
-                        <li class="flex items-center"><i data-lucide="check"
-                                class="w-4 h-4 text-indigo-400 mr-3 flex-shrink-0"></i> 10,000 Emails / month</li>
-                        <li class="flex items-center"><i data-lucide="check"
-                                class="w-4 h-4 text-indigo-400 mr-3 flex-shrink-0"></i> Bulk Campaign Tools</li>
-                        <li class="flex items-center"><i data-lucide="check"
-                                class="w-4 h-4 text-indigo-400 mr-3 flex-shrink-0"></i> Priority Support</li>
+
+                    <div class="mb-10">
+                        <div class="flex items-baseline text-white">
+                            <span class="text-5xl font-black">৳599</span>
+                            <span class="ml-2 text-gray-500 font-bold text-sm uppercase tracking-wider">/mo</span>
+                        </div>
+                        <div class="mt-2 text-xs font-bold text-indigo-400 uppercase tracking-widest">Priority Support Included</div>
+                    </div>
+
+                    <ul class="space-y-5 mb-12 flex-grow">
+                        <li class="flex items-center text-sm font-semibold text-gray-300">
+                            <i data-lucide="zap" class="w-5 h-5 text-indigo-400 mr-4 flex-shrink-0"></i>
+                            5 Verified Domains
+                        </li>
+                        <li class="flex items-center text-sm font-semibold text-gray-300">
+                            <i data-lucide="zap" class="w-5 h-5 text-indigo-400 mr-4 flex-shrink-0"></i>
+                            Unlimited Identities
+                        </li>
+                        <li class="flex items-center text-sm font-semibold text-gray-300">
+                            <i data-lucide="zap" class="w-5 h-5 text-indigo-400 mr-4 flex-shrink-0"></i>
+                            10,000 Emails / month
+                        </li>
+                        <li class="flex items-center text-sm font-semibold text-gray-300">
+                            <i data-lucide="zap" class="w-5 h-5 text-indigo-400 mr-4 flex-shrink-0"></i>
+                            Bulk Campaign Engine
+                        </li>
                     </ul>
-                    <a href="/auth/register"
-                        class="block w-full py-3 px-4 text-center rounded-xl font-medium text-white bg-indigo-600 hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-500/30">Start
-                        Free Trial</a>
+
+                    <a href="/auth/register" class="w-full py-5 text-center rounded-2xl font-black text-sm uppercase tracking-widest transition-all duration-300 bg-indigo-600 text-white hover:bg-indigo-500 shadow-xl shadow-indigo-600/30 hover:scale-[1.02]">
+                        Start Free Trial
+                    </a>
                 </div>
 
-                <!-- Enterprise Plan -->
-                <div
-                    class="bg-white rounded-3xl shadow-sm border border-gray-200 p-8 hover:shadow-lg transition-shadow duration-300">
-                    <h3 class="text-xl font-semibold text-gray-900">Scale</h3>
-                    <p class="text-gray-500 text-sm mt-2">High volume email architectures.</p>
-                    <div class="my-6">
-                        <span class="text-5xl font-extrabold text-gray-900">৳1999</span>
-                        <span class="text-gray-500 font-medium whitespace-nowrap">/month</span>
+                <!-- Scale Plan -->
+                <div class="group bg-gray-50/50 rounded-[2.5rem] p-10 border border-gray-100 hover:bg-white hover:shadow-2xl hover:border-purple-100 transition-all duration-500 flex flex-col">
+                    <div class="mb-8">
+                        <h3 class="text-xl font-bold text-gray-900 group-hover:text-purple-600 transition-colors">Scale</h3>
+                        <p class="text-gray-400 text-sm mt-2 font-medium">Enterprise-grade delivery architecture.</p>
                     </div>
-                    <ul class="space-y-4 mb-8 text-gray-600 text-sm">
-                        <li class="flex items-center"><i data-lucide="check"
-                                class="w-4 h-4 text-green-500 mr-3 flex-shrink-0"></i> Unlimited Domains</li>
-                        <li class="flex items-center"><i data-lucide="check"
-                                class="w-4 h-4 text-green-500 mr-3 flex-shrink-0"></i> 50,000 Emails / month</li>
-                        <li class="flex items-center"><i data-lucide="check"
-                                class="w-4 h-4 text-green-500 mr-3 flex-shrink-0"></i> Dedicated IP (Add-on)</li>
-                        <li class="flex items-center"><i data-lucide="check"
-                                class="w-4 h-4 text-green-500 mr-3 flex-shrink-0"></i> API Integrations</li>
-                        <li class="flex items-center"><i data-lucide="check"
-                                class="w-4 h-4 text-green-500 mr-3 flex-shrink-0"></i> 24/7 Phone Support</li>
+
+                    <div class="mb-10">
+                        <div class="flex items-baseline text-gray-900">
+                            <span class="text-5xl font-black">৳1999</span>
+                            <span class="ml-2 text-gray-400 font-bold text-sm uppercase tracking-wider">/mo</span>
+                        </div>
+                        <div class="mt-2 text-xs font-bold text-purple-600 uppercase tracking-widest">High Performance API</div>
+                    </div>
+
+                    <ul class="space-y-5 mb-12 flex-grow">
+                        <li class="flex items-center text-sm font-semibold text-gray-600">
+                            <div class="w-5 h-5 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mr-4 flex-shrink-0">
+                                <i data-lucide="check" class="w-3 h-3"></i>
+                            </div>
+                            Unlimited Domains
+                        </li>
+                        <li class="flex items-center text-sm font-semibold text-gray-600">
+                            <div class="w-5 h-5 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mr-4 flex-shrink-0">
+                                <i data-lucide="check" class="w-3 h-3"></i>
+                            </div>
+                            50,000 Emails / month
+                        </li>
+                        <li class="flex items-center text-sm font-semibold text-gray-600">
+                            <div class="w-5 h-5 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mr-4 flex-shrink-0">
+                                <i data-lucide="check" class="w-3 h-3"></i>
+                            </div>
+                            Dedicated IP Support
+                        </li>
+                        <li class="flex items-center text-sm font-semibold text-gray-600">
+                            <div class="w-5 h-5 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mr-4 flex-shrink-0">
+                                <i data-lucide="check" class="w-3 h-3"></i>
+                            </div>
+                             Full API Integration
+                        </li>
                     </ul>
-                    <a href="#contact"
-                        class="block w-full py-3 px-4 text-center rounded-xl font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition-colors">Contact
-                        Sales</a>
+
+                    <a href="#contact" class="w-full py-4 text-center rounded-2xl font-black text-sm uppercase tracking-widest transition-all duration-300 border border-gray-200 text-gray-900 bg-white group-hover:border-purple-600 group-hover:text-purple-600">
+                        Contact Sales
+                    </a>
                 </div>
 
             </div>
         </div>
+    </div>
+    </div>
     </div>
 
     <%- include('partials/footer') %>

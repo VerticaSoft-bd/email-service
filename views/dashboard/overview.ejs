@@ -38,46 +38,96 @@
         </dl>
     </div>
 
-    <!-- PLAN USAGE SECTION -->
-    <div class="mt-10">
-        <div class="border-b border-gray-200 pb-5">
-            <h3 class="text-lg font-medium leading-6 text-gray-900">Plan Usage (<%= (user.plan || 'starter').charAt(0).toUpperCase() + (user.plan || 'starter').slice(1) %>)</h3>
-            <p class="mt-2 max-w-4xl text-sm text-gray-500">Track your current usage against your plan limits.</p>
+    <!-- PREMIUM PLAN USAGE SECTION -->
+    <div class="mt-12">
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h3 class="text-xl font-bold text-gray-900 tracking-tight">Resource Utilization</h3>
+                <p class="text-sm text-gray-500 mt-1">Real-time status of your <%= (user.plan || 'starter') %> infrastructure</p>
+            </div>
+            <% if (user.plan === 'starter' || user.plan === 'pro') { %>
+            <a href="/dashboard/billing" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-semibold rounded-lg shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 transition-all hover:scale-105">
+                Upgrade Plan
+            </a>
+            <% } %>
         </div>
 
-        <div class="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-3">
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
             <% 
                 const plan = user.plan || 'starter';
                 const limits = PLAN_LIMITS[plan];
                 const stats = [
-                    { name: 'Domains', current: domainCount, limit: limits.domains },
-                    { name: 'Email Identities', current: accountCount, limit: limits.identities },
-                    { name: 'Monthly Emails', current: user.usage?.emailsSent || 0, limit: limits.emailsPerMonth }
+                    { 
+                        name: 'Verified Domains', 
+                        current: domainCount, 
+                        limit: limits.domains,
+                        icon: 'globe',
+                        color: 'indigo'
+                    },
+                    { 
+                        name: 'Active Identities', 
+                        current: accountCount, 
+                        limit: limits.identities,
+                        icon: 'users',
+                        color: 'purple'
+                    },
+                    { 
+                        name: 'Monthly Outbound', 
+                        current: user.usage?.emailsSent || 0, 
+                        limit: limits.emailsPerMonth,
+                        icon: 'send',
+                        color: 'blue'
+                    }
                 ];
             %>
 
             <% stats.forEach(item => { %>
-                <div class="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6 border border-gray-100">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-sm font-medium text-gray-500"><%= item.name %></span>
-                        <span class="text-sm font-semibold text-gray-900">
-                            <%= item.current %> / <%= item.limit === -1 ? '∞' : item.limit %>
-                        </span>
+                <div class="relative group bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:border-indigo-100 transition-all duration-300">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-<%= item.color %>-50 rounded-xl text-<%= item.color %>-600 group-hover:bg-<%= item.color %>-600 group-hover:text-white transition-colors duration-300">
+                            <i data-lucide="<%= item.icon %>" class="w-6 h-6"></i>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl font-black text-gray-900 leading-none">
+                                <%= item.current %>
+                            </div>
+                            <div class="text-[10px] uppercase font-bold text-gray-400 tracking-widest mt-1">
+                                <%= item.limit === -1 ? 'Unlimited' : `Allocated: ${item.limit}` %>
+                            </div>
+                        </div>
                     </div>
-                    <% if (item.limit !== -1) { 
-                        const percentage = Math.min((item.current / item.limit) * 100, 100);
-                        let barColor = 'bg-indigo-600';
-                        if (percentage >= 90) barColor = 'bg-red-500';
-                        else if (percentage >= 70) barColor = 'bg-yellow-500';
-                    %>
-                        <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div class="<%= barColor %> h-2 rounded-full transition-all duration-500" style="width: <%= percentage %>%;"></div>
-                        </div>
-                    <% } else { %>
-                        <div class="w-full bg-indigo-100 rounded-full h-2">
-                            <div class="bg-indigo-600 h-2 rounded-full w-full"></div>
-                        </div>
-                    <% } %>
+
+                    <h4 class="text-sm font-bold text-gray-700 mb-4"><%= item.name %></h4>
+
+                    <div class="relative pt-1">
+                        <% if (item.limit !== -1) { 
+                            const percentage = Math.min((item.current / item.limit) * 100, 100);
+                            let barColor = `bg-${item.color}-600`;
+                            if (percentage >= 90) barColor = 'bg-red-500';
+                            else if (percentage >= 75) barColor = 'bg-orange-500';
+                        %>
+                            <div class="overflow-hidden h-2.5 text-xs flex rounded-full bg-gray-100 mb-2">
+                                <div style="width: <%= percentage %>%;" 
+                                     class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center <%= barColor %> transition-all duration-700 ease-out relative">
+                                     <div class="absolute inset-0 bg-white/20 animate-pulse"></div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between text-[10px] font-bold text-gray-400">
+                                <span>USAGE: <%= percentage.toFixed(1) %>%</span>
+                                <span><%= item.limit - item.current %> REMAINING</span>
+                            </div>
+                        <% } else { %>
+                            <div class="overflow-hidden h-2.5 text-xs flex rounded-full bg-<%= item.color %>-50 mb-2">
+                                <div style="width: 100%;" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-<%= item.color %>-600"></div>
+                            </div>
+                            <div class="text-[10px] font-bold text-<%= item.color %>-600 uppercase tracking-widest">
+                                Unlimited Access Included
+                            </div>
+                        <% } %>
+                    </div>
+
+                    <!-- Decorative background blob on hover -->
+                    <div class="absolute -bottom-2 -right-2 w-20 h-20 bg-<%= item.color %>-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity blur-2xl -z-10"></div>
                 </div>
             <% }) %>
         </div>
