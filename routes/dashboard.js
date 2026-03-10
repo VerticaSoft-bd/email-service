@@ -11,6 +11,7 @@ import campaignsRoutes from './campaigns.js';
 import billingRoutes from './billing.js';
 import Domain from '../models/Domain.js';
 import EmailAccount from '../models/EmailAccount.js';
+import PLAN_LIMITS from '../config/limits.js';
 
 const router = express.Router();
 
@@ -26,8 +27,9 @@ router.use(async (req, res, next) => {
             return res.redirect('/auth/login');
         }
         req.user = user;
-        // Make user available to EJS templates without passing it every time
+        // Make user and limits available to EJS templates
         res.locals.user = user;
+        res.locals.PLAN_LIMITS = PLAN_LIMITS;
         next();
     } catch (err) {
         console.error(err);
@@ -39,10 +41,10 @@ router.get('/', async (req, res) => {
     try {
         const domainCount = await Domain.countDocuments({ userId: req.user._id });
         const accountCount = await EmailAccount.countDocuments({ userId: req.user._id });
-        res.render('dashboard/overview', { domainCount, accountCount });
+        res.render('dashboard/overview', { domainCount, accountCount, PLAN_LIMITS });
     } catch (err) {
         console.error('Error fetching dashboard stats:', err);
-        res.render('dashboard/overview', { domainCount: 0, accountCount: 0 });
+        res.render('dashboard/overview', { domainCount: 0, accountCount: 0, PLAN_LIMITS });
     }
 });
 

@@ -38,6 +38,51 @@
         </dl>
     </div>
 
+    <!-- PLAN USAGE SECTION -->
+    <div class="mt-10">
+        <div class="border-b border-gray-200 pb-5">
+            <h3 class="text-lg font-medium leading-6 text-gray-900">Plan Usage (<%= (user.plan || 'starter').charAt(0).toUpperCase() + (user.plan || 'starter').slice(1) %>)</h3>
+            <p class="mt-2 max-w-4xl text-sm text-gray-500">Track your current usage against your plan limits.</p>
+        </div>
+
+        <div class="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-3">
+            <% 
+                const plan = user.plan || 'starter';
+                const limits = PLAN_LIMITS[plan];
+                const stats = [
+                    { name: 'Domains', current: domainCount, limit: limits.domains },
+                    { name: 'Email Identities', current: accountCount, limit: limits.identities },
+                    { name: 'Monthly Emails', current: user.usage?.emailsSent || 0, limit: limits.emailsPerMonth }
+                ];
+            %>
+
+            <% stats.forEach(item => { %>
+                <div class="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6 border border-gray-100">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium text-gray-500"><%= item.name %></span>
+                        <span class="text-sm font-semibold text-gray-900">
+                            <%= item.current %> / <%= item.limit === -1 ? '∞' : item.limit %>
+                        </span>
+                    </div>
+                    <% if (item.limit !== -1) { 
+                        const percentage = Math.min((item.current / item.limit) * 100, 100);
+                        let barColor = 'bg-indigo-600';
+                        if (percentage >= 90) barColor = 'bg-red-500';
+                        else if (percentage >= 70) barColor = 'bg-yellow-500';
+                    %>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="<%= barColor %> h-2 rounded-full transition-all duration-500" style="width: <%= percentage %>%;"></div>
+                        </div>
+                    <% } else { %>
+                        <div class="w-full bg-indigo-100 rounded-full h-2">
+                            <div class="bg-indigo-600 h-2 rounded-full w-full"></div>
+                        </div>
+                    <% } %>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+
     <div class="mt-8 pt-8 border-t border-gray-200">
         <div class="mb-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900">Quick Actions</h3>

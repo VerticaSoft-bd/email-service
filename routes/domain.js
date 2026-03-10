@@ -5,6 +5,7 @@ import {
     getDnsRecords,
     checkVerificationStatus,
 } from '../services/ses.js';
+import { checkDomainLimit } from '../middleware/checkLimits.js';
 
 const router = Router();
 
@@ -25,7 +26,7 @@ router.get('/', async (req, res) => {
 });
 
 // POST /dashboard/domains/verify (Add new domain)
-router.post('/verify', async (req, res) => {
+router.post('/verify', checkDomainLimit, async (req, res) => {
     try {
         let { domainName } = req.body;
         domainName = domainName.trim().toLowerCase();

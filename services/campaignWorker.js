@@ -5,6 +5,7 @@ import Recipient from '../models/Recipient.js';
 import Unsubscribe from '../models/Unsubscribe.js';
 import EmailAccount from '../models/EmailAccount.js';
 import User from '../models/User.js';
+import PLAN_LIMITS from '../config/limits.js';
 
 // Configuration
 const BATCH_SIZE = 14; // Send max 14 emails per batch to stay under AWS sandbox/standard rate limits
@@ -35,6 +36,18 @@ async function processBatch(campaign) {
     try {
         const user = await User.findById(campaign.userId);
         if (!user) return;
+
+        // Check plan limits
+        const userPlan = user.plan || 'starter';
+        const limit = PLAN_LIMITS[userPlan].emailsPerMonth;
+        const emailsSent = user.usage?.emailsSent || 0;
+
+        if (limit !== -1 && emailsSent >= limit) {
+            console.log(`User ${user._id} has reached email limit (${limit}). Pausing campaign ${campaign._id}.`);
+            campaign.status = 'Paused'; // Or 'Failed' with an error message
+            await campaign.save();
+            return;
+        }
 
         // Fetch pending recipients
         const pending = await Recipient.find({ campaignId: campaign._id, status: 'Pending' }).limit(BATCH_SIZE);

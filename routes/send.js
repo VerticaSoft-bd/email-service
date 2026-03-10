@@ -3,6 +3,7 @@ import EmailAccount from '../models/EmailAccount.js';
 import EmailLog from '../models/EmailLog.js';
 import { sendEmail } from '../services/ses.js';
 import mongoose from 'mongoose';
+import { checkEmailLimit } from '../middleware/checkLimits.js';
 
 const router = Router();
 
@@ -21,7 +22,7 @@ router.get('/', async (req, res) => {
 });
 
 // Process sending email from UI
-router.post('/', async (req, res) => {
+router.post('/', checkEmailLimit, async (req, res) => {
     try {
         const accounts = await EmailAccount.find({ userId: req.user._id });
         const { fromAccount, to, subject, body } = req.body;

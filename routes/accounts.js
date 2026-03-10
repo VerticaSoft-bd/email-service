@@ -2,6 +2,7 @@ import { Router } from 'express';
 import EmailAccount from '../models/EmailAccount.js';
 import Domain from '../models/Domain.js';
 import bcrypt from 'bcrypt';
+import { checkIdentityLimit } from '../middleware/checkLimits.js';
 
 const router = Router();
 
@@ -15,7 +16,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', checkIdentityLimit, async (req, res) => {
     try {
         const { prefix, password, domainId } = req.body;
         const domains = await Domain.find({ userId: req.user._id, isVerified: true });
