@@ -6,8 +6,8 @@ const router = Router();
 
 // Pricing Details Map
 const PLAN_DETAILS = {
-    'pro': { amount: 2900, name: 'Professional Plan' },
-    'scale': { amount: 9900, name: 'Scale Plan' }
+    'pro': { amount: 599, name: 'Professional Plan' },
+    'scale': { amount: 1999, name: 'Scale Plan' }
 };
 
 // GET Billing Dashboard
