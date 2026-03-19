@@ -8,6 +8,7 @@ import adminRoutes from './admin.js';
 import sendRoutes from './send.js';
 import docsRoutes from './docs.js';
 import campaignsRoutes from './campaigns.js';
+import suppressionsRoutes from './suppressions.js';
 import billingRoutes from './billing.js';
 import Domain from '../models/Domain.js';
 import EmailAccount from '../models/EmailAccount.js';
@@ -56,6 +57,7 @@ router.use('/admin', adminRoutes);
 router.use('/send', sendRoutes);
 router.use('/docs', docsRoutes);
 router.use('/campaigns', campaignsRoutes);
+router.use('/suppressions', suppressionsRoutes);
 router.use('/billing', billingRoutes); // Mounted billing routes
 
 export default router;

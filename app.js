@@ -10,6 +10,7 @@ import dashboardRoutes from './routes/dashboard.js';
 import emailRoutes from './routes/email.js';
 import trackRoutes from './routes/track.js';
 import unsubscribeRoutes from './routes/unsubscribe.js';
+import snsRoutes from './routes/sns.js';
 import { startCampaignWorker } from './services/campaignWorker.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -42,6 +43,7 @@ app.use('/dashboard', dashboardRoutes);
 app.use('/api', emailRoutes);
 app.use('/track', trackRoutes);
 app.use('/unsubscribe', unsubscribeRoutes);
+app.use('/sns', express.text({ type: 'text/plain' }), snsRoutes);
 
 // Redirect root to landing page
 app.get('/', (req, res) => res.render('index'));

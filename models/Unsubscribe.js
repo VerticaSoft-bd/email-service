@@ -4,7 +4,13 @@ const unsubscribeSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     email: { type: String, required: true },
     campaignId: { type: mongoose.Schema.Types.ObjectId, ref: 'Campaign' }, // Optional traceback
+    type: { 
+        type: String, 
+        enum: ['unsubscribe', 'bounce', 'complaint'], 
+        default: 'unsubscribe' 
+    },
     reason: { type: String },
+    metadata: { type: Object }, // Store raw SNS data if needed
     createdAt: { type: Date, default: Date.now }
 });
 

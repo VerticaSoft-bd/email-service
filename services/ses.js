@@ -94,9 +94,24 @@ export async function checkVerificationStatus(domainRecord) {
 /**
  * Send an email via SES using the user's credentials.
  */
-export async function sendEmail({ user, to, subject, body }) {
+export async function sendEmail({ user, to, subject, body, campaignId }) {
+    // 1. Check suppression list (Bounces, Complaints, Unsubscribes)
+    const suppressed = await Unsubscribe.findOne({ 
+        userId: user._id, 
+        email: to.toLowerCase() 
+    });
+
+    if (suppressed) {
+        console.log(`Skipping suppressed email: ${to} (Type: ${suppressed.type})`);
+        return { skipped: true, reason: suppressed.type };
+    }
+
     const client = createSesClient();
 
+    // To add List-Unsubscribe header with SendEmailCommand, we'd normally need SES v2 
+    // or SendRawEmailCommand. For now, we'll ensure the body has a clear unsubscribe link.
+    // AWS also looks for the "Precedence: bulk" header for automated emails.
+    
     const params = {
         Source: user.senderEmail,
         Destination: {
