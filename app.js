@@ -45,8 +45,10 @@ app.use('/track', trackRoutes);
 app.use('/unsubscribe', unsubscribeRoutes);
 app.use('/sns', express.text({ type: 'text/plain' }), snsRoutes);
 
-// Redirect root to landing page
+// Landing & Static Pages
 app.get('/', (req, res) => res.render('index'));
+app.get('/privacy', (req, res) => res.render('privacy', { title: 'Privacy Policy' }));
+app.get('/terms', (req, res) => res.render('terms', { title: 'Terms of Service' }));
 
 // ── Database & Server ──────────────────────────────────────────────────────────
 mongoose
