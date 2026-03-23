@@ -160,4 +160,34 @@ router.get('/invoice/:id', async (req, res) => {
     }
 });
 
+// POST Request Refund
+router.post('/refund/:id', async (req, res) => {
+    try {
+        const order = await Order.findOne({ _id: req.params.id, userId: req.user._id });
+        
+        if (!order) {
+            return res.redirect('/dashboard/billing?error=OrderNotFound');
+        }
+
+        if (order.status !== 'completed') {
+            return res.redirect('/dashboard/billing?error=InvalidOrderStatus');
+        }
+
+        // Mark as refund requested
+        order.status = 'refund-requested';
+        await order.save();
+
+        // Downgrade User Plan immediately upon request
+        await User.findByIdAndUpdate(req.user._id, {
+            plan: 'starter',
+            $unset: { subscriptionExpiry: "" }
+        });
+
+        res.redirect('/dashboard/billing?success=RefundRequested');
+    } catch (err) {
+        console.error(err);
+        res.redirect('/dashboard/billing?error=RefundRequestFailed');
+    }
+});
+
 export default router;

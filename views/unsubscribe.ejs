@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unsubscribe - MailFlow SaaS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 p-8 text-center space-y-6">
+        
+        <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-indigo-100">
+            <i data-lucide="check-circle" class="h-8 w-8 text-indigo-600"></i>
+        </div>
+
+        <div>
+            <h2 class="text-2xl font-bold text-gray-900 tracking-tight">Unsubscribed Action Confirmed</h2>
+            <p class="mt-3 text-sm text-gray-500">
+                <%= message %>
+            </p>
+        </div>
+
+        <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <p class="text-sm font-medium text-gray-700 break-all"><%= email %></p>
+            <p class="text-xs text-gray-500 mt-1">will no longer receive emails from this sender.</p>
+        </div>
+
+        <div class="pt-2">
+            <p class="text-xs text-gray-400">Powered by MailFlow SaaS</p>
+        </div>
+
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

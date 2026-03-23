@@ -52,7 +52,43 @@
                 </dl>
             </div>
 
-            <div class="mt-12 bg-white shadow sm:rounded-lg border border-gray-200">
+            <!-- Pending Refund Requests Section -->
+            <div class="mt-8 bg-white shadow sm:rounded-lg border border-gray-200">
+                <div class="px-4 py-5 border-b border-gray-200 sm:px-6 flex justify-between items-center">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">Pending Refund Requests</h3>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                        <%= refundRequests ? refundRequests.length : 0 %> Pending
+                    </span>
+                </div>
+                <ul role="list" class="divide-y divide-gray-200">
+                    <% if (refundRequests && refundRequests.length > 0) { %>
+                        <% refundRequests.forEach(req => { %>
+                            <li class="px-4 py-4 sm:px-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                                <div class="flex flex-col">
+                                    <p class="text-sm font-medium text-gray-900">
+                                        <%= req.userId.name %> <span class="text-xs text-gray-500">(<%= req.userId.email %>)</span>
+                                    </p>
+                                    <p class="text-xs text-gray-500 mt-1">
+                                        Invoice: <%= req.invoice_number %> | Plan: <span class="uppercase font-semibold"><%= req.plan %></span>
+                                    </p>
+                                    <p class="text-xs text-gray-500 mt-1 pb-1">Amount: ৳<%= req.amount %> | Requested: <%= new Date(req.createdAt).toLocaleDateString() %></p>
+                                </div>
+                                <div class="ml-4 flex-shrink-0 flex items-center justify-center space-x-2">
+                                    <form action="/dashboard/admin/refund/approve/<%= req._id %>" method="POST" onsubmit="return confirm('Approve this refund? Plan will be downgraded to starter.');">
+                                        <button type="submit" class="inline-flex items-center px-3 py-1.5 border border-purple-300 text-purple-700 hover:bg-purple-50 shadow-sm text-xs font-medium rounded bg-white focus:outline-none transition-colors">
+                                            Approve Refund
+                                        </button>
+                                    </form>
+                                </div>
+                            </li>
+                        <% }) %>
+                    <% } else { %>
+                        <li class="px-4 py-6 text-center text-sm text-gray-500">No pending refund requests.</li>
+                    <% } %>
+                </ul>
+            </div>
+
+            <div class="mt-8 bg-white shadow sm:rounded-lg border border-gray-200">
                 <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
                     <h3 class="text-lg leading-6 font-medium text-gray-900">Recent Users</h3>
                 </div>

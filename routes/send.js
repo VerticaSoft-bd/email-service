@@ -47,13 +47,16 @@ router.post('/', checkEmailLimit, async (req, res) => {
         const logId = new mongoose.Types.ObjectId();
         const hostUrl = process.env.HOST_URL || `${req.protocol}://${req.get('host')}`;
         const trackingPixel = `<img src="${hostUrl}/track/${logId}" width="1" height="1" style="display:none;" />`;
+        const emailBase64 = Buffer.from(to).toString('base64');
+        const unsubUrl = `${hostUrl}/unsubscribe/${req.user._id}/${emailBase64}`;
+        const unsubFooter = `<br><br><p style="font-size: 11px; color: #777; text-align: center; margin-top: 30px;">If you no longer wish to receive these emails, you can <a href="${unsubUrl}" style="color: #4f46e5; text-decoration: underline;">unsubscribe here</a>.</p>`;
 
         let finalBody = body;
         if (account.signature) {
             finalBody += `<br><br>${account.signature}`;
         }
 
-        const htmlBody = finalBody + trackingPixel;
+        const htmlBody = finalBody + unsubFooter + trackingPixel;
 
         try {
             const result = await sendEmail({ user: userWithSender, to, subject, body: htmlBody });

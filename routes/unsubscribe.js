@@ -11,22 +11,18 @@ router.get('/:userId/:emailBase64', async (req, res) => {
 
         // Check if already unsubscribed
         const exists = await Unsubscribe.findOne({ userId, email });
+        let message = 'You have already been unsubscribed.';
+        
         if (!exists) {
             await Unsubscribe.create({
                 userId,
                 email,
                 reason: 'One-click unsubscribe'
             });
+            message = 'You have been successfully unsubscribed.';
         }
 
-        res.status(200).send(`
-            <html>
-                <body style="font-family: sans-serif; text-align: center; padding: 50px;">
-                    <h2>Unsubscribed Successfully</h2>
-                    <p>${email} will no longer receive emails from this sender.</p>
-                </body>
-            </html>
-        `);
+        res.render('unsubscribe', { email, message });
     } catch (err) {
         console.error('Unsubscribe error:', err);
         res.status(500).send('Error processing unsubscribe request.');

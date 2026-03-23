@@ -2,6 +2,7 @@ import { Router } from 'express';
 import User from '../models/User.js';
 import EmailLog from '../models/EmailLog.js';
 import EmailAccount from '../models/EmailAccount.js';
+import Order from '../models/Order.js';
 
 const router = Router();
 
@@ -21,14 +22,44 @@ router.get('/', async (req, res) => {
         const totalAccounts = await EmailAccount.countDocuments();
 
         const users = await User.find().sort({ createdAt: -1 }).limit(50);
+        
+        // Fetch pending refund requests
+        const refundRequests = await Order.find({ status: 'refund-requested' })
+            .populate('userId', 'name email')
+            .sort({ createdAt: -1 });
 
         res.render('dashboard/admin', {
             stats: { totalUsers, totalDomains, totalEmailsSent, totalAccounts },
             users,
+            refundRequests,
             error: null
         });
     } catch (err) {
-        res.render('dashboard/admin', { stats: {}, users: [], error: err.message });
+        res.render('dashboard/admin', { stats: {}, users: [], refundRequests: [], error: err.message });
+    }
+});
+
+// Approve Refund Request
+router.post('/refund/approve/:id', async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id);
+        if (!order || order.status !== 'refund-requested') {
+            return res.redirect('/dashboard/admin?error=InvalidOrder');
+        }
+
+        order.status = 'refunded';
+        await order.save();
+
+        // Downgrade User Plan
+        await User.findByIdAndUpdate(order.userId, {
+            plan: 'starter',
+            $unset: { subscriptionExpiry: "" }
+        });
+
+        res.redirect('/dashboard/admin?success=RefundApproved');
+    } catch (err) {
+        console.error('Error approving refund:', err);
+        res.redirect('/dashboard/admin?error=RefundApprovalFailed');
     }
 });
 
